@@ -1,8 +1,10 @@
 package com.tinqinacademy.bff.core.processors;
 
-import com.tinqinacademy.authentication.api.base.*;
-import com.tinqinacademy.authentication.core.errors.ErrorMapper;
-import com.tinqinacademy.authentication.core.exception.exceptions.ViolationException;
+
+
+import com.tinqinacademy.bff.api.base.OperationInput;
+import com.tinqinacademy.bff.core.errors.ErrorMapper;
+import com.tinqinacademy.bff.core.exception.exceptions.ViolationException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;

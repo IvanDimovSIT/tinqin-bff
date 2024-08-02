@@ -1,10 +1,9 @@
 package com.tinqinacademy.bff.core.errors;
 
 
-
-import com.tinqinacademy.authentication.api.errors.Errors;
-import com.tinqinacademy.authentication.core.exception.BaseException;
-import com.tinqinacademy.authentication.core.exception.exceptions.ViolationException;
+import com.tinqinacademy.bff.api.errors.Errors;
+import com.tinqinacademy.bff.core.exception.BaseException;
+import com.tinqinacademy.bff.core.exception.exceptions.ViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
