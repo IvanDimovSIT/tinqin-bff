@@ -16,6 +16,11 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.tinqinacademy.hotel</groupId>
+            <artifactId>restexport</artifactId>
+            <version>${hotel.restexport.version}</version>
+        </dependency>
     </dependencies>
 
 
