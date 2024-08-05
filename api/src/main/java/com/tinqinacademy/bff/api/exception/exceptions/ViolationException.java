@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.exception.exceptions;
+package com.tinqinacademy.bff.api.exception.exceptions;
 
 
 
