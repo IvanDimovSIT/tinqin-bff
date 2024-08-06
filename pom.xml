@@ -22,6 +22,7 @@
         <jakarta.validation-api-version>3.1.0</jakarta.validation-api-version>
         <flattenpomversion>1.2.7</flattenpomversion>
         <hotel.restexport.version>0.0.1-SNAPSHOT</hotel.restexport.version>
+        <comments.restexport.version>0.0.1-SNAPSHOT</comments.restexport.version>
     </properties>
 
     <modules>
@@ -34,9 +35,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>4.1.3</version>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-core</artifactId>
+            <version>13.3</version>
         </dependency>
 
         <dependency>
