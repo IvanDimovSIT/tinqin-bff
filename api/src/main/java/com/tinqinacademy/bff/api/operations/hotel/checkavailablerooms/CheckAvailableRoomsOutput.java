@@ -1,6 +1,7 @@
 package com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms;
 
-import com.tinqinacademy.hotel.api.base.OperationOutput;
+
+import com.tinqinacademy.bff.api.base.OperationOutput;
 import lombok.*;
 
 import java.util.List;

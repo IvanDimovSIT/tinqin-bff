@@ -2,9 +2,13 @@ package com.tinqinacademy.bff.rest.controllers;
 
 import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
+import com.tinqinacademy.bff.api.model.enums.BathroomType;
+import com.tinqinacademy.bff.api.model.enums.BedSize;
+import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOperation;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomInput;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOperation;
 
+import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.*;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,11 +20,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
 
 @Controller
 @RequiredArgsConstructor
 public class HotelController extends BaseController {
     private final GetRoomOperation getRoomOperation;
+    private final CheckAvailableRoomsOperation checkAvailableRoomsOperation;
 
     @Operation(summary = "Returns basic info for a room", description = "Returns basic info for a room with " +
             "specified id.")
@@ -36,6 +44,34 @@ public class HotelController extends BaseController {
                 .build();
 
         Either<Errors, GetRoomOutput> output = getRoomOperation.process(input);
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Checks whether a room is available for a certain period", description = "Checks whether a" +
+            " room is available for a certain period. Room requirements should come as query parameters in URL.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @GetMapping(RestApiRoutes.HOTEL_GET_AVAILABLE_ROOMS)
+    public ResponseEntity<?> checkAvailableRooms(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam(required = false) Integer bedCount,
+            @RequestParam(required = false) String bedSize,
+            @RequestParam(required = false) String bathroomType) {
+        CheckAvailableRoomsInput input = CheckAvailableRoomsInput.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .bedCount(bedCount)
+                .bedSize(bedSize ==null? null: BedSize.getCode(bedSize))
+                .bathroomType(bathroomType == null? null: BathroomType.getCode(bathroomType))
+                .build();
+
+
+        Either<Errors, CheckAvailableRoomsOutput> output =
+                checkAvailableRoomsOperation.process(input);
+
         return mapToResponseEntity(output, HttpStatus.OK);
     }
 }
