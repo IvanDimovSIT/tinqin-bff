@@ -10,6 +10,9 @@ import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOperation;
 
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.*;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOutput;
+import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomInput;
+import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomOperation;
+import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +33,7 @@ import java.time.LocalDate;
 public class HotelController extends BaseController {
     private final GetRoomOperation getRoomOperation;
     private final CheckAvailableRoomsOperation checkAvailableRoomsOperation;
+    private final UnbookRoomOperation unbookRoomOperation;
 
     @Operation(summary = "Returns basic info for a room", description = "Returns basic info for a room with " +
             "specified id.")
@@ -71,6 +76,24 @@ public class HotelController extends BaseController {
 
         Either<Errors, CheckAvailableRoomsOutput> output =
                 checkAvailableRoomsOperation.process(input);
+
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Unbooks a booked room", description = "Unbooks a room that the user has already" +
+            " booked")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Booking id not found"),
+    })
+    @DeleteMapping(RestApiRoutes.HOTEL_UNBOOK_ROOM)
+    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId) {
+        UnbookRoomInput input = UnbookRoomInput.builder()
+                .bookingId(bookingId)
+                .build();
+
+        Either<Errors, UnbookRoomOutput> output = unbookRoomOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.OK);
     }
