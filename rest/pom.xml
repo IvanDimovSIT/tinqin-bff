@@ -20,13 +20,19 @@
             <artifactId>core</artifactId>
             <version>${revision}</version>
         </dependency>
+<!--
+        <dependency>
+            <groupId>com.tinqinacademy.bff</groupId>
+            <artifactId>domain</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.tinqinacademy.bff</groupId>
             <artifactId>api</artifactId>
             <version>${revision}</version>
         </dependency>
-
+-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

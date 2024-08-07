@@ -2,6 +2,7 @@ package com.tinqinacademy.bff.domain.config;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tinqinacademy.authentication.restexport.AuthenticationRestExport;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import feign.Contract;
@@ -51,6 +52,16 @@ public class FeignConfiguration {
                 .encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
                 .target(CommentsRestExport.class,"http://localhost:8081");
+
+    }
+
+    @Bean
+    public AuthenticationRestExport authenticationRestExport() {
+        return Feign.builder()
+                .client(new OkHttpClient())
+                .encoder(new JacksonEncoder(objectMapper))
+                .decoder(new JacksonDecoder(objectMapper))
+                .target(AuthenticationRestExport.class,"http://localhost:8082");
 
     }
 }
