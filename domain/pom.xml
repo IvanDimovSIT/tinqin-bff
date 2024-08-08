@@ -16,6 +16,23 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.tinqinacademy.authentication</groupId>
+            <artifactId>restexport</artifactId>
+            <version>${authentication.restexport.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tinqinacademy.hotel</groupId>
+            <artifactId>restexport</artifactId>
+            <version>${hotel.restexport.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tinqinacademy.comments</groupId>
+            <artifactId>restexport</artifactId>
+            <version>${comments.restexport.version}</version>
+        </dependency>
     </dependencies>
 
 
