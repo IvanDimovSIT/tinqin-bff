@@ -1,6 +1,5 @@
 package com.tinqinacademy.bff.rest.security;
 
-import com.tinqinacademy.authentication.api.operations.authenticate.AuthenticateInput;
 import com.tinqinacademy.authentication.api.operations.authenticate.AuthenticateOutput;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,14 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String jwt = authHeader.substring(7);
-
         try{
-            AuthenticateInput input = AuthenticateInput.builder()
-                    .jwtToken(jwt)
-                    .build();
-
-            AuthenticateOutput authenticateOutput = authenticationRestExport.authenticate(input);
+            AuthenticateOutput authenticateOutput = authenticationRestExport.authenticate(authHeader);
             UserAuthority userAuthority = UserAuthority.builder()
                     .authority(authenticateOutput.getRole().toString().toUpperCase())
                     .build();
