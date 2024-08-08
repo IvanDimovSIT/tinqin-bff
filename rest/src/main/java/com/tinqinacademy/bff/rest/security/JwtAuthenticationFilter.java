@@ -1,6 +1,7 @@
 package com.tinqinacademy.bff.rest.security;
 
 import com.tinqinacademy.authentication.api.operations.authenticate.AuthenticateInput;
+import com.tinqinacademy.authentication.api.operations.authenticate.AuthenticateOutput;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.tinqinacademy.authentication.restexport.AuthenticationRestExport;
@@ -40,14 +40,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             AuthenticateInput input = AuthenticateInput.builder()
                     .jwtToken(jwt)
                     .build();
-            UserDetails userDetails = authenticationRestExport.authenticate(input);
+
+            AuthenticateOutput authenticateOutput = authenticationRestExport.authenticate(input);
+            UserAuthority userAuthority = UserAuthority.builder()
+                    .authority(authenticateOutput.getRole().toString().toUpperCase())
+                    .build();
+
+            LoggedUserDetails loggedUserDetails = LoggedUserDetails.builder()
+                    .userAuthority(userAuthority)
+                    .username(authenticateOutput.getUsername())
+                    .password(authenticateOutput.getPassword())
+                    .build();
+
             Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
+                    loggedUserDetails,
                     null,
-                    userDetails.getAuthorities()
+                    loggedUserDetails.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        }catch (Exception e){}
+        }catch (Exception ignored){}
 
         filterChain.doFilter(request, response);
     }

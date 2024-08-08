@@ -17,12 +17,28 @@ public class SecurityConfig {
 
     private final String[] ADMIN_URLS = {
             RestApiRoutes.SYSTEM_DELETE_ROOM,
+            RestApiRoutes.SYSTEM_ADD_ROOM,
             RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM,
-            RestApiRoutes.SYSTEM_UPDATE_ROOM
+            RestApiRoutes.SYSTEM_UPDATE_ROOM,
+            RestApiRoutes.SYSTEM_REGISTER_VISITOR,
+            RestApiRoutes.HOTEL_GET_ROOM,
+            RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT,
+            RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT,
     };
     private final String[] USER_URLS = {
-            RestApiRoutes.HOTEL_ADD_COMMENT
+            RestApiRoutes.HOTEL_ADD_COMMENT,
+            RestApiRoutes.HOTEL_BOOK_ROOM,
+            RestApiRoutes.HOTEL_UNBOOK_ROOM,
+            RestApiRoutes.HOTEL_EDIT_COMMENT,
+
+
     };
+    //private static final String[] PUBLIC_URLS = {
+    //        "/swagger-ui.html",
+    //        "/swagger-ui/**",
+    //        "/v3/api-docs/**",
+    //        "/webjars/**"
+    //};
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -33,8 +49,10 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
-                    request.requestMatchers(ADMIN_URLS).hasRole("admin");
-                    request.requestMatchers(USER_URLS).hasAnyRole("user", "admin");
+                    request.requestMatchers(ADMIN_URLS).hasAuthority("ADMIN");
+                    request.requestMatchers(USER_URLS).hasAnyAuthority("USER", "ADMIN");
+                    //request.requestMatchers(PUBLIC_URLS).permitAll();
+                    request.anyRequest().permitAll();
                 })
                 .sessionManagement(
                         httpSecuritySessionManagementConfigurer ->
