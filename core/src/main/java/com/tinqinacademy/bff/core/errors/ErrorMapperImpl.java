@@ -4,6 +4,7 @@ package com.tinqinacademy.bff.core.errors;
 import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.exception.BaseException;
 import com.tinqinacademy.bff.api.exception.exceptions.ViolationException;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,16 @@ public class ErrorMapperImpl implements ErrorMapper {
 
     }
 
+    private Errors convertFeignException(Throwable throwable) {
+        FeignException exception = (FeignException) throwable;
+
+        Errors.ErrorsBuilder errors = Errors.builder();
+        errors.error(exception.getMessage(), HttpStatus.valueOf(exception.status()));
+
+        return errors.build();
+
+    }
+
     @Override
     public Errors map(Throwable throwable) {
         return Match(throwable).of(
@@ -47,6 +58,9 @@ public class ErrorMapperImpl implements ErrorMapper {
                 ),
                 Case($(instanceOf(BaseException.class)),
                         this::convertCustomException
+                ),
+                Case($(instanceOf(FeignException.class)),
+                        this::convertFeignException
                 ),
                 Case($(),
                         this::convertDefaultException
