@@ -8,18 +8,22 @@ import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder(toBuilder = true)
-@ToString
-@Getter
-@Setter
 public class LoggedUserDetails implements UserDetails {
     private UserAuthority userAuthority;
-    private String password;
     private String username;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(userAuthority);
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 }

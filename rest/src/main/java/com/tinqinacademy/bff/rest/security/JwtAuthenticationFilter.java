@@ -1,13 +1,14 @@
 package com.tinqinacademy.bff.rest.security;
 
 import com.tinqinacademy.authentication.api.operations.authenticate.AuthenticateOutput;
+import com.tinqinacademy.bff.core.security.JwtToken;
+import com.tinqinacademy.bff.core.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationRestExport authenticationRestExport;
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(
@@ -35,21 +37,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try{
             AuthenticateOutput authenticateOutput = authenticationRestExport.authenticate(authHeader);
-            UserAuthority userAuthority = UserAuthority.builder()
-                    .authority(authenticateOutput.getRole().toString().toUpperCase())
-                    .build();
 
-            LoggedUserDetails loggedUserDetails = LoggedUserDetails.builder()
-                    .userAuthority(userAuthority)
-                    .username(authenticateOutput.getUsername())
-                    .password(authenticateOutput.getPassword())
-                    .build();
+            JwtToken jwtToken = jwtUtil.decodeHeader(authHeader);
 
-            Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
-                    loggedUserDetails,
-                    null,
-                    loggedUserDetails.getAuthorities()
-            );
+            UserAuthority userAuthority = new UserAuthority(jwtToken.getRole().toUpperCase());
+
+            LoggedUserDetails loggedUserDetails = new LoggedUserDetails(userAuthority, jwtToken.getId());
+
+            Authentication authenticationToken = new JwtAuthentication(loggedUserDetails);
+
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }catch (Exception ignored){}
 
