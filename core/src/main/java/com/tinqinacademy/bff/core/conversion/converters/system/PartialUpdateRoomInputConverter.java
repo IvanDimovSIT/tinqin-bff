@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters;
+package com.tinqinacademy.bff.core.conversion.converters.system;
 
 import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomInput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;

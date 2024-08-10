@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters;
+package com.tinqinacademy.bff.core.conversion.converters.hotel;
 
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
