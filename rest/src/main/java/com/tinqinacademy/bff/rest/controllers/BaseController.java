@@ -6,12 +6,15 @@ import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.core.security.JwtToken;
 import com.tinqinacademy.bff.core.security.JwtUtil;
 import io.vavr.control.Either;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
-
+@RequiredArgsConstructor
 public abstract class BaseController {
-    protected JwtUtil jwtUtil;
+    protected final JwtUtil jwtUtil;
 
     protected <T extends OperationOutput> ResponseEntity<?> mapToResponseEntity(Either<Errors, T> either, HttpStatus status) {
         return either.isRight()?

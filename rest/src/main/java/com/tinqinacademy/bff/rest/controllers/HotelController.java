@@ -4,36 +4,47 @@ import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.model.enums.BathroomType;
 import com.tinqinacademy.bff.api.model.enums.BedSize;
+import com.tinqinacademy.bff.api.operations.hotel.bookroom.BookRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOperation;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomInput;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOperation;
-
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.*;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOutput;
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.bff.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.bff.api.operations.hotel.bookroom.BookRoomOutput;
+import com.tinqinacademy.bff.core.security.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
 @Controller
-@RequiredArgsConstructor
 public class HotelController extends BaseController {
     private final GetRoomOperation getRoomOperation;
     private final CheckAvailableRoomsOperation checkAvailableRoomsOperation;
     private final UnbookRoomOperation unbookRoomOperation;
+    private final BookRoomOperation bookRoomOperation;
+
+    public HotelController(JwtUtil jwtUtil, GetRoomOperation getRoomOperation,
+                           CheckAvailableRoomsOperation checkAvailableRoomsOperation,
+                           UnbookRoomOperation unbookRoomOperation, BookRoomOperation bookRoomOperation) {
+        super(jwtUtil);
+        this.getRoomOperation = getRoomOperation;
+        this.checkAvailableRoomsOperation = checkAvailableRoomsOperation;
+        this.unbookRoomOperation = unbookRoomOperation;
+        this.bookRoomOperation = bookRoomOperation;
+    }
 
     @Operation(summary = "Returns basic info for a room", description = "Returns basic info for a room with " +
             "specified id.")
@@ -78,6 +89,25 @@ public class HotelController extends BaseController {
                 checkAvailableRoomsOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Books the room", description = "Books the room specified")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Room booked"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Room id not found"),
+    })
+    @PostMapping(RestApiRoutes.HOTEL_BOOK_ROOM)
+    public ResponseEntity<?> bookRoom(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwtHeader,
+                                      @PathVariable String roomId, @RequestBody BookRoomInput bookRoomInput) {
+        BookRoomInput input = bookRoomInput.toBuilder()
+                .roomId(roomId)
+                .userId(extractUserIdFromToken(jwtHeader))
+                .build();
+
+        Either<Errors, BookRoomOutput> output = bookRoomOperation.process(input);
+
+        return mapToResponseEntity(output, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Unbooks a booked room", description = "Unbooks a room that the user has already" +

@@ -26,7 +26,7 @@ public class JwtUtil {
             throw new RuntimeException("Invalid JWT token");
         }
 
-        String id = claims.get("username");
+        String id = claims.get("sub");
         String role = claims.get("role");
 
         return new JwtToken(id, role);

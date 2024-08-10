@@ -19,18 +19,13 @@ import java.time.LocalDate;
 @Setter
 public class BookRoomInput implements OperationInput {
     @JsonIgnore
-    private String id;
+    @NotEmpty
+    private String roomId;
     @NotNull
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;
+    @JsonIgnore
     @NotEmpty
-    @Size(min = 2, max = 50, message = "Between 2 and 50 characters")
-    private String firstName;
-    @NotEmpty
-    @Size(min = 2, max = 50, message = "Between 2 and 50 characters")
-    private String lastName;
-    @NotEmpty
-    @Pattern(regexp = "[0-9]{10}", message = "10 Digits")
-    private String phoneNumber;
+    private String userId;
 }
