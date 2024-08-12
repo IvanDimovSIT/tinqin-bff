@@ -8,6 +8,7 @@ import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentOperation
 import com.tinqinacademy.bff.api.operations.hotel.bookroom.BookRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOperation;
 import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentOperation;
+import com.tinqinacademy.bff.api.operations.hotel.getcomments.GetCommentsOperation;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomInput;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.*;
@@ -22,6 +23,8 @@ import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentInput;
 import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentOutput;
 import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentInput;
 import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentOutput;
+import com.tinqinacademy.bff.api.operations.hotel.getcomments.GetCommentsInput;
+import com.tinqinacademy.bff.api.operations.hotel.getcomments.GetCommentsOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -43,11 +46,13 @@ public class HotelController extends BaseController {
     private final BookRoomOperation bookRoomOperation;
     private final AddCommentOperation addCommentOperation;
     private final EditCommentOperation editCommentOperation;
+    private final GetCommentsOperation getCommentsOperation;
 
     public HotelController(JwtUtil jwtUtil, GetRoomOperation getRoomOperation,
                            CheckAvailableRoomsOperation checkAvailableRoomsOperation,
                            UnbookRoomOperation unbookRoomOperation, BookRoomOperation bookRoomOperation,
-                           AddCommentOperation addCommentOperation, EditCommentOperation editCommentOperation) {
+                           AddCommentOperation addCommentOperation, EditCommentOperation editCommentOperation,
+                           GetCommentsOperation getCommentsOperation) {
         super(jwtUtil);
         this.getRoomOperation = getRoomOperation;
         this.checkAvailableRoomsOperation = checkAvailableRoomsOperation;
@@ -55,6 +60,7 @@ public class HotelController extends BaseController {
         this.bookRoomOperation = bookRoomOperation;
         this.addCommentOperation = addCommentOperation;
         this.editCommentOperation = editCommentOperation;
+        this.getCommentsOperation = getCommentsOperation;
     }
 
     @Operation(summary = "Returns basic info for a room", description = "Returns basic info for a room with " +
@@ -171,6 +177,21 @@ public class HotelController extends BaseController {
                 .build();
 
         Either<Errors, EditCommentOutput> output = editCommentOperation.process(editCommentInput);
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Retrieves comments", description = "Gets a list of comments left for a certain room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @GetMapping(RestApiRoutes.HOTEL_GET_COMMENTS)
+    public ResponseEntity<?> getComments(@PathVariable String roomId) {
+        GetCommentsInput input = GetCommentsInput.builder()
+                .roomId(roomId)
+                .build();
+
+        Either<Errors, GetCommentsOutput> output = getCommentsOperation.process(input);
         return mapToResponseEntity(output, HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.tinqinacademy.bff.rest.controllers;
 import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOperation;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOperation;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
@@ -21,11 +22,12 @@ import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOutput
 import com.tinqinacademy.bff.core.security.JwtUtil;
 import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOutput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -41,12 +43,14 @@ public class SystemController extends BaseController {
     private final UpdateRoomOperation updateRoomOperation;
     private final GetVisitorsOperation getVisitorsOperation;
     private final RegisterVisitorOperation registerVisitorOperation;
+    private final AdminDeleteCommentOperation adminDeleteCommentOperation;
 
     public SystemController(JwtUtil jwtUtil, DeleteRoomOperation deleteRoomOperation,
                             PartialUpdateRoomOperation partialUpdateRoomOperation,
                             AddRoomOperation addRoomOperation, UpdateRoomOperation updateRoomOperation,
                             GetVisitorsOperation getVisitorsOperation,
-                            RegisterVisitorOperation registerVisitorOperation) {
+                            RegisterVisitorOperation registerVisitorOperation,
+                            AdminDeleteCommentOperation adminDeleteCommentOperation) {
         super(jwtUtil);
         this.deleteRoomOperation = deleteRoomOperation;
         this.partialUpdateRoomOperation = partialUpdateRoomOperation;
@@ -54,6 +58,7 @@ public class SystemController extends BaseController {
         this.updateRoomOperation = updateRoomOperation;
         this.getVisitorsOperation = getVisitorsOperation;
         this.registerVisitorOperation = registerVisitorOperation;
+        this.adminDeleteCommentOperation = adminDeleteCommentOperation;
     }
 
     @Operation(summary = "Registers a visitor as room renter", description = "Registers a visitor as room renter")
@@ -170,6 +175,21 @@ public class SystemController extends BaseController {
 
         Either<Errors, GetVisitorsOutput> output = getVisitorsOperation.process(input);
 
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Admin deletes a comments", description = "Gets a list of comments left for a certain room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @DeleteMapping(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT)
+    public ResponseEntity<?> adminDeleteComment(@PathVariable String commentId) {
+        AdminDeleteCommentInput input = AdminDeleteCommentInput.builder()
+                .commentId(commentId)
+                .build();
+
+        Either<Errors, AdminDeleteCommentOutput> output = adminDeleteCommentOperation.process(input);
         return mapToResponseEntity(output, HttpStatus.OK);
     }
 }
