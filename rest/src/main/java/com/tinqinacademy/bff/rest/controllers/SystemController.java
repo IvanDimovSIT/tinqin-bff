@@ -4,6 +4,7 @@ import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOperation;
 import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOperation;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentOperation;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOperation;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
@@ -24,10 +25,13 @@ import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisit
 import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentInput;
 import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -44,13 +48,15 @@ public class SystemController extends BaseController {
     private final GetVisitorsOperation getVisitorsOperation;
     private final RegisterVisitorOperation registerVisitorOperation;
     private final AdminDeleteCommentOperation adminDeleteCommentOperation;
+    private final AdminEditCommentOperation adminEditCommentOperation;
 
     public SystemController(JwtUtil jwtUtil, DeleteRoomOperation deleteRoomOperation,
                             PartialUpdateRoomOperation partialUpdateRoomOperation,
                             AddRoomOperation addRoomOperation, UpdateRoomOperation updateRoomOperation,
                             GetVisitorsOperation getVisitorsOperation,
                             RegisterVisitorOperation registerVisitorOperation,
-                            AdminDeleteCommentOperation adminDeleteCommentOperation) {
+                            AdminDeleteCommentOperation adminDeleteCommentOperation,
+                            AdminEditCommentOperation adminEditCommentOperation) {
         super(jwtUtil);
         this.deleteRoomOperation = deleteRoomOperation;
         this.partialUpdateRoomOperation = partialUpdateRoomOperation;
@@ -59,6 +65,7 @@ public class SystemController extends BaseController {
         this.getVisitorsOperation = getVisitorsOperation;
         this.registerVisitorOperation = registerVisitorOperation;
         this.adminDeleteCommentOperation = adminDeleteCommentOperation;
+        this.adminEditCommentOperation = adminEditCommentOperation;
     }
 
     @Operation(summary = "Registers a visitor as room renter", description = "Registers a visitor as room renter")
@@ -192,4 +199,24 @@ public class SystemController extends BaseController {
         Either<Errors, AdminDeleteCommentOutput> output = adminDeleteCommentOperation.process(input);
         return mapToResponseEntity(output, HttpStatus.OK);
     }
+
+    @Operation(summary = "Admin edits a comment", description = "Admin edits a certain comment left for a room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @PutMapping(RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT)
+    public ResponseEntity<?> adminEditComment(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String jwtHeader,
+            @PathVariable String commentId,
+            @RequestBody AdminEditCommentInput input) {
+        AdminEditCommentInput adminEditCommentInput = input.toBuilder()
+                .commentId(commentId)
+                .adminId(extractUserIdFromToken(jwtHeader))
+                .build();
+
+        Either<Errors, AdminEditCommentOutput> output = adminEditCommentOperation.process(adminEditCommentInput);
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
 }

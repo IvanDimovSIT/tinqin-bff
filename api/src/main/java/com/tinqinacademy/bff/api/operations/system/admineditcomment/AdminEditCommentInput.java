@@ -14,6 +14,7 @@ import lombok.*;
 public class AdminEditCommentInput implements OperationInput {
     @JsonIgnore
     private String commentId;
+    @JsonIgnore
     @NotEmpty
     private String adminId;
     @NotEmpty
