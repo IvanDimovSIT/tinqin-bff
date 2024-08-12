@@ -3,14 +3,11 @@ package com.tinqinacademy.bff.rest.controllers;
 
 import com.tinqinacademy.bff.api.base.OperationOutput;
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.core.security.JwtToken;
 import com.tinqinacademy.bff.core.security.JwtUtil;
 import io.vavr.control.Either;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 public abstract class BaseController {
