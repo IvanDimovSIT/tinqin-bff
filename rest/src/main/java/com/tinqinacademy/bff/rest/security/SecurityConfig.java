@@ -24,6 +24,7 @@ public class SecurityConfig {
             RestApiRoutes.HOTEL_GET_ROOM,
             RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT,
             RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT,
+            RestApiRoutes.SYSTEM_GET_VISITORS,
     };
     private final String[] USER_URLS = {
             RestApiRoutes.HOTEL_ADD_COMMENT,
@@ -57,8 +58,8 @@ public class SecurityConfig {
                 .sessionManagement(
                         httpSecuritySessionManagementConfigurer ->
                                 httpSecuritySessionManagementConfigurer
-                                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

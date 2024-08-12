@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.hotel;
+package com.tinqinacademy.bff.core.conversion.converters.hotel.getroom;
 
 
 import com.tinqinacademy.bff.api.model.enums.BathroomType;

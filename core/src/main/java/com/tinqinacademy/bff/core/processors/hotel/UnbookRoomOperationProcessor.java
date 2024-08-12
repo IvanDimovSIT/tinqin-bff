@@ -1,10 +1,9 @@
-package com.tinqinacademy.bff.core.processors.system;
+package com.tinqinacademy.bff.core.processors.hotel;
 
 import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.UnbookRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;

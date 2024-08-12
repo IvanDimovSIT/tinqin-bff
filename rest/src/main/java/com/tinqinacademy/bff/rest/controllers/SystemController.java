@@ -3,30 +3,83 @@ package com.tinqinacademy.bff.rest.controllers;
 import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOperation;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentOperation;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOperation;
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOperation;
 import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomInput;
 import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOperation;
 import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOutput;
 import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomInput;
 import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOperation;
+import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomInput;
+import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsInput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOutput;
+import com.tinqinacademy.bff.core.security.JwtUtil;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorInput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOutput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Controller
-@RequiredArgsConstructor
 public class SystemController extends BaseController {
     private final DeleteRoomOperation deleteRoomOperation;
     private final PartialUpdateRoomOperation partialUpdateRoomOperation;
     private final AddRoomOperation addRoomOperation;
+    private final UpdateRoomOperation updateRoomOperation;
+    private final GetVisitorsOperation getVisitorsOperation;
+    private final RegisterVisitorOperation registerVisitorOperation;
+    private final AdminDeleteCommentOperation adminDeleteCommentOperation;
+    private final AdminEditCommentOperation adminEditCommentOperation;
+
+    public SystemController(JwtUtil jwtUtil, DeleteRoomOperation deleteRoomOperation,
+                            PartialUpdateRoomOperation partialUpdateRoomOperation,
+                            AddRoomOperation addRoomOperation, UpdateRoomOperation updateRoomOperation,
+                            GetVisitorsOperation getVisitorsOperation,
+                            RegisterVisitorOperation registerVisitorOperation,
+                            AdminDeleteCommentOperation adminDeleteCommentOperation,
+                            AdminEditCommentOperation adminEditCommentOperation) {
+        super(jwtUtil);
+        this.deleteRoomOperation = deleteRoomOperation;
+        this.partialUpdateRoomOperation = partialUpdateRoomOperation;
+        this.addRoomOperation = addRoomOperation;
+        this.updateRoomOperation = updateRoomOperation;
+        this.getVisitorsOperation = getVisitorsOperation;
+        this.registerVisitorOperation = registerVisitorOperation;
+        this.adminDeleteCommentOperation = adminDeleteCommentOperation;
+        this.adminEditCommentOperation = adminEditCommentOperation;
+    }
+
+    @Operation(summary = "Registers a visitor as room renter", description = "Registers a visitor as room renter")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Room id not found")
+    })
+    @PostMapping(RestApiRoutes.SYSTEM_REGISTER_VISITOR)
+    public ResponseEntity<?> registerVisitor(@RequestBody RegisterVisitorInput input) {
+        Either<Errors, RegisterVisitorOutput> output = registerVisitorOperation.process(input);
+
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
 
     @Operation(summary = "Deletes a room", description = "Deletes a room" +
             " is available")
@@ -69,10 +122,101 @@ public class SystemController extends BaseController {
             @ApiResponse(responseCode = "201", description = "Successfully added room"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PostMapping(com.tinqinacademy.hotel.api.RestApiRoutes.SYSTEM_ADD_ROOM)
+    @PostMapping(RestApiRoutes.SYSTEM_ADD_ROOM)
     public ResponseEntity<?> addRoom(@RequestBody AddRoomInput input) {
         Either<Errors, AddRoomOutput> output = addRoomOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.CREATED);
     }
+
+    @Operation(summary = "Update room data", description = "Admin updates the info regarding a certain" +
+            " room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success updated room data"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Room id not found"),
+    })
+    @PutMapping(RestApiRoutes.SYSTEM_UPDATE_ROOM)
+    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @RequestBody UpdateRoomInput input) {
+        UpdateRoomInput updateRoomInput = input.toBuilder()
+                .roomId(roomId)
+                .build();
+
+        Either<Errors, UpdateRoomOutput> output = updateRoomOperation.process(updateRoomInput);
+
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Finds info on visitors", description = "Admin only. Provides a report based on" +
+            " various criteria. Provides info on when the room was booked and by whom. Can report when a user has" +
+            " occupied rooms.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @GetMapping(RestApiRoutes.SYSTEM_GET_VISITORS)
+    public ResponseEntity<?> getVisitors(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String idCardNumber,
+            @RequestParam(required = false) LocalDate idCardValidity,
+            @RequestParam(required = false) String idCardIssueAuthority,
+            @RequestParam(required = false) LocalDate idCardIssueDate,
+            @RequestParam(required = false) String roomNumber
+    ) {
+        GetVisitorsInput input = GetVisitorsInput.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .firstName(firstName)
+                .lastName(lastName)
+                .phoneNumber(phoneNumber)
+                .idCardIssueAuthority(idCardIssueAuthority)
+                .idCardNumber(idCardNumber)
+                .idCardValidity(idCardValidity)
+                .idCardIssueDate(idCardIssueDate)
+                .roomNumber(roomNumber)
+                .build();
+
+        Either<Errors, GetVisitorsOutput> output = getVisitorsOperation.process(input);
+
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Admin deletes a comments", description = "Gets a list of comments left for a certain room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @DeleteMapping(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT)
+    public ResponseEntity<?> adminDeleteComment(@PathVariable String commentId) {
+        AdminDeleteCommentInput input = AdminDeleteCommentInput.builder()
+                .commentId(commentId)
+                .build();
+
+        Either<Errors, AdminDeleteCommentOutput> output = adminDeleteCommentOperation.process(input);
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Admin edits a comment", description = "Admin edits a certain comment left for a room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @PutMapping(RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT)
+    public ResponseEntity<?> adminEditComment(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String jwtHeader,
+            @PathVariable String commentId,
+            @RequestBody AdminEditCommentInput input) {
+        AdminEditCommentInput adminEditCommentInput = input.toBuilder()
+                .commentId(commentId)
+                .adminId(extractUserIdFromToken(jwtHeader))
+                .build();
+
+        Either<Errors, AdminEditCommentOutput> output = adminEditCommentOperation.process(adminEditCommentInput);
+        return mapToResponseEntity(output, HttpStatus.OK);
+    }
+
 }

@@ -4,7 +4,6 @@ import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsInput;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOperation;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOutput;
-import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
@@ -17,11 +16,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class CheckAvailableRoomsProcessor extends BaseOperationProcessor implements CheckAvailableRoomsOperation {
+public class CheckAvailableRoomsOperationProcessor extends BaseOperationProcessor implements CheckAvailableRoomsOperation {
     private final HotelRestExport hotelRestExport;
 
-    public CheckAvailableRoomsProcessor(ConversionService conversionService, ErrorMapper errorMapper,
-                                        Validator validator, HotelRestExport hotelRestExport) {
+    public CheckAvailableRoomsOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
+                                                 Validator validator, HotelRestExport hotelRestExport) {
         super(conversionService, errorMapper, validator);
         this.hotelRestExport = hotelRestExport;
     }

@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.system;
+package com.tinqinacademy.bff.core.conversion.converters.system.deleteroom;
 
 import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;

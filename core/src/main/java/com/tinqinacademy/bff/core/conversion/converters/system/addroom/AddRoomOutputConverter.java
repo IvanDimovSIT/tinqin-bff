@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.system;
+package com.tinqinacademy.bff.core.conversion.converters.system.addroom;
 
 import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
