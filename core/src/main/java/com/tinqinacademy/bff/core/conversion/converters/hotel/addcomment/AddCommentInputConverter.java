@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.hotel;
+package com.tinqinacademy.bff.core.conversion.converters.hotel.addcomment;
 
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
 import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentInput;

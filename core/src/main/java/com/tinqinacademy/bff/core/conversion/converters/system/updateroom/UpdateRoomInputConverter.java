@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.system;
+package com.tinqinacademy.bff.core.conversion.converters.system.updateroom;
 
 import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
@@ -14,8 +14,8 @@ public class UpdateRoomInputConverter extends BaseConverter<UpdateRoomInput,
         return com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput.builder()
                 .roomId(source.getRoomId())
                 .roomNumber(source.getRoomNumber())
-                .bathroomType(source.getBathroomType() == null? null: BathroomType.getCode(source.getBathroomType().toString()))
-                .bedSize(source.getBedSize() == null? null: BedSize.getCode(source.getBedSize().toString()))
+                .bathroomType(source.getBathroomType() == null ? null : BathroomType.getCode(source.getBathroomType().toString()))
+                .bedSize(source.getBedSize() == null ? null : BedSize.getCode(source.getBedSize().toString()))
                 .bedCount(source.getBedCount())
                 .floor(source.getFloor())
                 .price(source.getPrice())

@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.system;
+package com.tinqinacademy.bff.core.conversion.converters.system.registervisitor;
 
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
 import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOutput;

@@ -1,9 +1,8 @@
-package com.tinqinacademy.bff.core.conversion.converters.hotel;
+package com.tinqinacademy.bff.core.conversion.converters.hotel.addcomment;
 
 import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class AddCommentOutputConverter extends BaseConverter<com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput,

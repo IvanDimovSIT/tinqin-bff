@@ -1,4 +1,4 @@
-package com.tinqinacademy.bff.core.conversion.converters.hotel;
+package com.tinqinacademy.bff.core.conversion.converters.hotel.bookroom;
 
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;

@@ -1,9 +1,8 @@
-package com.tinqinacademy.bff.core.conversion.converters.system;
+package com.tinqinacademy.bff.core.conversion.converters.system.getvisitors;
 
 import com.tinqinacademy.bff.api.model.visitor.VisitorOutput;
 import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
-import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
