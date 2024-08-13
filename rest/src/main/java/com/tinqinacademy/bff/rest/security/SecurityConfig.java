@@ -24,23 +24,23 @@ public class SecurityConfig {
 
     private void configureAdminAccess(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
         request
-                .requestMatchers(HttpMethod.POST, RestApiRoutes.SYSTEM_REGISTER_VISITOR).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.GET, RestApiRoutes.SYSTEM_GET_VISITORS).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, RestApiRoutes.SYSTEM_DELETE_ROOM).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.POST, RestApiRoutes.SYSTEM_ADD_ROOM).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PATCH, RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT, RestApiRoutes.SYSTEM_UPDATE_ROOM).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT).hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT, RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT).hasAuthority("ADMIN");
+                .requestMatchers(HttpMethod.POST, RestApiRoutes.SYSTEM_REGISTER_VISITOR).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, RestApiRoutes.SYSTEM_GET_VISITORS).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, RestApiRoutes.SYSTEM_DELETE_ROOM).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, RestApiRoutes.SYSTEM_ADD_ROOM).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, RestApiRoutes.SYSTEM_UPDATE_ROOM).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT).hasRole("ADMIN");
 
     }
 
     private void configureUserAccess(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
         request
-                .requestMatchers(HttpMethod.POST, RestApiRoutes.HOTEL_BOOK_ROOM).hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, RestApiRoutes.HOTEL_UNBOOK_ROOM).hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers(HttpMethod.POST, RestApiRoutes.HOTEL_ADD_COMMENT).hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PATCH, RestApiRoutes.HOTEL_EDIT_COMMENT).hasAnyAuthority("USER", "ADMIN");
+                .requestMatchers(HttpMethod.POST, RestApiRoutes.HOTEL_BOOK_ROOM).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.DELETE, RestApiRoutes.HOTEL_UNBOOK_ROOM).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.POST, RestApiRoutes.HOTEL_ADD_COMMENT).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.PATCH, RestApiRoutes.HOTEL_EDIT_COMMENT).hasAnyRole("USER", "ADMIN");
     }
 
     @Bean

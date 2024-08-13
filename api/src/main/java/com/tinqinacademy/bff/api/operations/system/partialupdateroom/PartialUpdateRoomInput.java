@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.math.BigDecimal;
 
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 @Setter
 public class PartialUpdateRoomInput implements OperationInput {
     @JsonIgnore
+    @UUID
     private String roomId;
     @Min(value = 1)
     @Max(value = 10)

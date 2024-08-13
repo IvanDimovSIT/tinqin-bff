@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.time.LocalDate;
 
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 public class BookRoomInput implements OperationInput {
     @JsonIgnore
     @NotEmpty
+    @UUID
     private String roomId;
     @NotNull
     private LocalDate startDate;
@@ -27,5 +29,6 @@ public class BookRoomInput implements OperationInput {
     private LocalDate endDate;
     @JsonIgnore
     @NotEmpty
+    @UUID
     private String userId;
 }
