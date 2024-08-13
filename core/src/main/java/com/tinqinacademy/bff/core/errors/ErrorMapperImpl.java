@@ -5,6 +5,7 @@ import com.tinqinacademy.bff.api.errors.Errors;
 import com.tinqinacademy.bff.api.exception.BaseException;
 import com.tinqinacademy.bff.api.exception.exceptions.ViolationException;
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,9 @@ import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;
 
 @Component
+@RequiredArgsConstructor
 public class ErrorMapperImpl implements ErrorMapper {
-
+    private final FeignErrorMapper feignErrorMapper;
 
     private Errors convertCustomException(Throwable throwable) {
         BaseException exception = (BaseException) throwable;
@@ -41,16 +43,7 @@ public class ErrorMapperImpl implements ErrorMapper {
     }
 
     private Errors convertFeignException(Throwable throwable) {
-        FeignException exception = (FeignException) throwable;
-
-        Errors.ErrorsBuilder errors = Errors.builder();
-        errors.error(exception.getMessage(),
-                exception.status() == -1 ?
-                        HttpStatus.BAD_REQUEST :
-                        HttpStatus.valueOf(exception.status()));
-
-        return errors.build();
-
+        return feignErrorMapper.mapFeignException((FeignException) throwable);
     }
 
     @Override

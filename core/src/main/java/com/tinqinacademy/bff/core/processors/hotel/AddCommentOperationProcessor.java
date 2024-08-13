@@ -22,19 +22,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class AddCommentOperationProcessor extends BaseOperationProcessor implements AddCommentOperation {
     private final CommentsRestExport commentsRestExport;
+    private final HotelRestExport hotelRestExport;
 
     public AddCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
-                                        Validator validator, CommentsRestExport commentsRestExport) {
+                                        Validator validator, CommentsRestExport commentsRestExport,
+                                        HotelRestExport hotelRestExport) {
         super(conversionService, errorMapper, validator);
         this.commentsRestExport = commentsRestExport;
+        this.hotelRestExport = hotelRestExport;
     }
 
+    private void validateRoomId(String roomId){
+        com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput hotelOutput =
+                hotelRestExport.getRoom(roomId);
+    }
 
     @Override
     public Either<Errors, AddCommentOutput> process(AddCommentInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
+                    validateRoomId(input.getRoomId());
 
                     com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput commentsOutput =
                             commentsRestExport.addComment(input.getRoomId(), conversionService.convert(input,
