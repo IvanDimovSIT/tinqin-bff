@@ -12,8 +12,7 @@ import java.time.LocalDate;
 @Setter
 public class CommentOutput {
     private String id;
-    private String firstName;
-    private String lastName;
+    private String userId;
     private String content;
     private LocalDate publishDate;
     private LocalDate lastEditedDate;
