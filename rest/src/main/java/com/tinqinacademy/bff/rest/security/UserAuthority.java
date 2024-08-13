@@ -9,7 +9,7 @@ public class UserAuthority implements GrantedAuthority {
     private String authority;
 
     public UserAuthority(String authority) {
-        this.authority = authority;
+        this.authority = "ROLE_" + authority.toUpperCase();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.tinqinacademy.bff.api.validation.bathroomtype.ValidBathroomType;
 import com.tinqinacademy.bff.api.validation.bedsize.ValidBedSize;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.math.BigDecimal;
 
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 @Setter
 public class UpdateRoomInput implements OperationInput {
     @JsonIgnore
+    @UUID
     private String roomId;
     @NotNull
     @Min(value = 1)

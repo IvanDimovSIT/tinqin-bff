@@ -3,6 +3,7 @@ package com.tinqinacademy.bff.api.operations.system.admindeletecomment;
 import com.tinqinacademy.bff.api.base.OperationInput;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,5 +13,6 @@ import lombok.*;
 @Setter
 public class AdminDeleteCommentInput implements OperationInput {
     @NotEmpty
+    @UUID
     private String commentId;
 }

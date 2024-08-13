@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.time.LocalDate;
 
@@ -35,5 +36,6 @@ public class VisitorInput {
     private LocalDate idCardIssueDate;
     private LocalDate dateOfBirth;
     @NotEmpty
+    @UUID
     private String roomId;
 }

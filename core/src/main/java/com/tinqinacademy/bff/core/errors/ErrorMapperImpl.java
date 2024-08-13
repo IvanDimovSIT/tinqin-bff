@@ -44,7 +44,10 @@ public class ErrorMapperImpl implements ErrorMapper {
         FeignException exception = (FeignException) throwable;
 
         Errors.ErrorsBuilder errors = Errors.builder();
-        errors.error(exception.getMessage(), HttpStatus.valueOf(exception.status()));
+        errors.error(exception.getMessage(),
+                exception.status() == -1 ?
+                        HttpStatus.BAD_REQUEST :
+                        HttpStatus.valueOf(exception.status()));
 
         return errors.build();
 
