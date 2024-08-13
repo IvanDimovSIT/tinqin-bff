@@ -1,17 +1,16 @@
 package com.tinqinacademy.bff.core.conversion.converters.system.partialupdateroom;
 
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
+import com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomOutput;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PartialUpdateRoomOutputConverter extends BaseConverter<
-        com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomOutput,
-        PartialUpdateRoomOutput> {
+public class PartialUpdateRoomOutputConverter extends BaseConverter<PartialUpdateRoomOutput, BffPartialUpdateRoomOutput> {
 
     @Override
-    protected PartialUpdateRoomOutput convertObject(com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomOutput source) {
-        PartialUpdateRoomOutput output = PartialUpdateRoomOutput.builder()
+    protected BffPartialUpdateRoomOutput convertObject(PartialUpdateRoomOutput source) {
+        BffPartialUpdateRoomOutput output = BffPartialUpdateRoomOutput.builder()
                 .id(source.getId())
                 .build();
 

@@ -1,12 +1,13 @@
 package com.tinqinacademy.bff.core.processors.system;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorInput;
-import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOperation;
-import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOutput;
-import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorInput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorOperation;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class RegisterVisitorOperationProcessor extends BaseOperationProcessor implements RegisterVisitorOperation {
+public class RegisterVisitorOperationProcessor extends BaseOperationProcessor implements BffRegisterVisitorOperation {
     private final HotelRestExport hotelRestExport;
 
     public RegisterVisitorOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -27,16 +28,16 @@ public class RegisterVisitorOperationProcessor extends BaseOperationProcessor im
     }
 
     @Override
-    public Either<Errors, RegisterVisitorOutput> process(RegisterVisitorInput input) {
+    public Either<Errors, BffRegisterVisitorOutput> process(BffRegisterVisitorInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
 
-                    com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput hotelOutput =
-                            hotelRestExport.registerVisitor(conversionService.convert(input,
-                                    com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput.class));
+                    RegisterVisitorOutput hotelOutput = hotelRestExport
+                            .registerVisitor(conversionService.convert(input, RegisterVisitorInput.class));
 
-                    RegisterVisitorOutput output = conversionService.convert(hotelOutput, RegisterVisitorOutput.class);
+                    BffRegisterVisitorOutput output = conversionService
+                            .convert(hotelOutput, BffRegisterVisitorOutput.class);
 
                     log.info("End process result:{}", output);
 

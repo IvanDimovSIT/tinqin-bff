@@ -3,18 +3,18 @@ package com.tinqinacademy.bff.core.conversion.converters.hotel.getroom;
 
 import com.tinqinacademy.bff.api.model.enums.BathroomType;
 import com.tinqinacademy.bff.api.model.enums.BedSize;
-import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOutput;
+import com.tinqinacademy.bff.api.operations.hotel.getroom.BffGetRoomOutput;
 import com.tinqinacademy.bff.core.conversion.BaseConverter;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GetRoomOutputConverter
-        extends BaseConverter<com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput, GetRoomOutput> {
+public class GetRoomOutputConverter extends BaseConverter<GetRoomOutput, BffGetRoomOutput> {
 
 
     @Override
-    protected GetRoomOutput convertObject(com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput source) {
-        GetRoomOutput output = GetRoomOutput.builder()
+    protected BffGetRoomOutput convertObject(GetRoomOutput source) {
+        BffGetRoomOutput output = BffGetRoomOutput.builder()
                 .id(source.getId())
                 .price(source.getPrice())
                 .floor(source.getFloor())
