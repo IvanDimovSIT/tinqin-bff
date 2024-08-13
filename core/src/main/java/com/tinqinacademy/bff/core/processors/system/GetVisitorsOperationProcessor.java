@@ -1,12 +1,12 @@
 package com.tinqinacademy.bff.core.processors.system;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsInput;
-import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOperation;
-import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOutput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.BffGetVisitorsInput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.BffGetVisitorsOperation;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.BffGetVisitorsOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class GetVisitorsOperationProcessor extends BaseOperationProcessor implements GetVisitorsOperation {
+public class GetVisitorsOperationProcessor extends BaseOperationProcessor implements BffGetVisitorsOperation {
     private final HotelRestExport hotelRestExport;
 
     public GetVisitorsOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -27,12 +27,12 @@ public class GetVisitorsOperationProcessor extends BaseOperationProcessor implem
     }
 
     @Override
-    public Either<Errors, GetVisitorsOutput> process(GetVisitorsInput input) {
+    public Either<Errors, BffGetVisitorsOutput> process(BffGetVisitorsInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
 
-                    com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput hotelOutput =
+                    GetVisitorsOutput hotelOutput =
                             hotelRestExport.getVisitors(
                                     input.getStartDate(),
                                     input.getEndDate(),
@@ -45,7 +45,7 @@ public class GetVisitorsOperationProcessor extends BaseOperationProcessor implem
                                     input.getIdCardIssueDate(),
                                     input.getRoomNumber());
 
-                    GetVisitorsOutput output = conversionService.convert(hotelOutput, GetVisitorsOutput.class);
+                    BffGetVisitorsOutput output = conversionService.convert(hotelOutput, BffGetVisitorsOutput.class);
 
                     log.info("End process result:{}", output);
 

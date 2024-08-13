@@ -1,9 +1,9 @@
 package com.tinqinacademy.bff.core.processors.hotel;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomInput;
-import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOperation;
-import com.tinqinacademy.bff.api.operations.hotel.getroom.GetRoomOutput;
+import com.tinqinacademy.bff.api.operations.hotel.getroom.BffGetRoomInput;
+import com.tinqinacademy.bff.api.operations.hotel.getroom.BffGetRoomOperation;
+import com.tinqinacademy.bff.api.operations.hotel.getroom.BffGetRoomOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
@@ -14,12 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @Service
 @Slf4j
-public class GetRoomOperationProcessor extends BaseOperationProcessor implements GetRoomOperation {
+public class GetRoomOperationProcessor extends BaseOperationProcessor implements BffGetRoomOperation {
     private final HotelRestExport hotelRestExport;
 
     public GetRoomOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -29,7 +26,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
     }
 
     @Override
-    public Either<Errors, GetRoomOutput> process(GetRoomInput input) {
+    public Either<Errors, BffGetRoomOutput> process(BffGetRoomInput input) {
         return Try.of(() -> {
                     log.info("Start getRoom input:{}", input);
                     validate(input);
@@ -37,7 +34,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
                     com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput hotelOutput =
                             hotelRestExport.getRoom(input.getId());
 
-                    GetRoomOutput output = conversionService.convert(hotelOutput, GetRoomOutput.class);
+                    BffGetRoomOutput output = conversionService.convert(hotelOutput, BffGetRoomOutput.class);
 
                     log.info("End getRoom result:{}", output);
 

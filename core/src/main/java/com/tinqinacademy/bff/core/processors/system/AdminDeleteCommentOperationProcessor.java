@@ -1,11 +1,12 @@
 package com.tinqinacademy.bff.core.processors.system;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentInput;
-import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOperation;
-import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.BffAdminDeleteCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.BffAdminDeleteCommentOperation;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.BffAdminDeleteCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.comments.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class AdminDeleteCommentOperationProcessor extends BaseOperationProcessor implements AdminDeleteCommentOperation {
+public class AdminDeleteCommentOperationProcessor extends BaseOperationProcessor implements BffAdminDeleteCommentOperation {
     private final CommentsRestExport commentsRestExport;
 
     public AdminDeleteCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -27,17 +28,17 @@ public class AdminDeleteCommentOperationProcessor extends BaseOperationProcessor
 
 
     @Override
-    public Either<Errors, AdminDeleteCommentOutput> process(AdminDeleteCommentInput input) {
+    public Either<Errors, BffAdminDeleteCommentOutput> process(BffAdminDeleteCommentInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
 
-                    com.tinqinacademy.comments.api.operations.system.admindeletecomment.AdminDeleteCommentOutput
-                            commentsOutput = commentsRestExport.adminDeleteComment(input.getCommentId());
+                    AdminDeleteCommentOutput commentsOutput = commentsRestExport
+                            .adminDeleteComment(input.getCommentId());
 
 
-                    AdminDeleteCommentOutput output = conversionService.convert(commentsOutput,
-                            AdminDeleteCommentOutput.class);
+                    BffAdminDeleteCommentOutput output = conversionService.convert(commentsOutput,
+                            BffAdminDeleteCommentOutput.class);
 
                     log.info("End process result:{}", output);
 

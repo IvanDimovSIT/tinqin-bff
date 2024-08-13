@@ -2,31 +2,31 @@ package com.tinqinacademy.bff.rest.controllers;
 
 import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOperation;
-import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOperation;
-import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentOperation;
-import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomInput;
-import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOperation;
-import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOperation;
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomInput;
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOperation;
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomInput;
-import com.tinqinacademy.bff.api.operations.system.addroom.AddRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOperation;
-import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomInput;
-import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomOperation;
-import com.tinqinacademy.bff.api.operations.system.updateroom.UpdateRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsInput;
-import com.tinqinacademy.bff.api.operations.system.getvisitors.GetVisitorsOutput;
+import com.tinqinacademy.bff.api.operations.system.addroom.BffAddRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.BffAdminDeleteCommentOperation;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.BffAdminEditCommentOperation;
+import com.tinqinacademy.bff.api.operations.system.deleteroom.BffDeleteRoomInput;
+import com.tinqinacademy.bff.api.operations.system.deleteroom.BffDeleteRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.deleteroom.BffDeleteRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.BffGetVisitorsOperation;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomInput;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.addroom.BffAddRoomInput;
+import com.tinqinacademy.bff.api.operations.system.addroom.BffAddRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorOperation;
+import com.tinqinacademy.bff.api.operations.system.updateroom.BffUpdateRoomInput;
+import com.tinqinacademy.bff.api.operations.system.updateroom.BffUpdateRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.updateroom.BffUpdateRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.BffGetVisitorsInput;
+import com.tinqinacademy.bff.api.operations.system.getvisitors.BffGetVisitorsOutput;
 import com.tinqinacademy.bff.core.security.JwtUtil;
-import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorInput;
-import com.tinqinacademy.bff.api.operations.system.registervisitor.RegisterVisitorOutput;
-import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentInput;
-import com.tinqinacademy.bff.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
-import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentInput;
-import com.tinqinacademy.bff.api.operations.system.admineditcomment.AdminEditCommentOutput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorInput;
+import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorOutput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.BffAdminDeleteCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admindeletecomment.BffAdminDeleteCommentOutput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.BffAdminEditCommentInput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.BffAdminEditCommentOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,22 +41,22 @@ import java.time.LocalDate;
 
 @Controller
 public class SystemController extends BaseController {
-    private final DeleteRoomOperation deleteRoomOperation;
-    private final PartialUpdateRoomOperation partialUpdateRoomOperation;
-    private final AddRoomOperation addRoomOperation;
-    private final UpdateRoomOperation updateRoomOperation;
-    private final GetVisitorsOperation getVisitorsOperation;
-    private final RegisterVisitorOperation registerVisitorOperation;
-    private final AdminDeleteCommentOperation adminDeleteCommentOperation;
-    private final AdminEditCommentOperation adminEditCommentOperation;
+    private final BffDeleteRoomOperation deleteRoomOperation;
+    private final BffPartialUpdateRoomOperation partialUpdateRoomOperation;
+    private final BffAddRoomOperation addRoomOperation;
+    private final BffUpdateRoomOperation updateRoomOperation;
+    private final BffGetVisitorsOperation getVisitorsOperation;
+    private final BffRegisterVisitorOperation registerVisitorOperation;
+    private final BffAdminDeleteCommentOperation adminDeleteCommentOperation;
+    private final BffAdminEditCommentOperation adminEditCommentOperation;
 
-    public SystemController(JwtUtil jwtUtil, DeleteRoomOperation deleteRoomOperation,
-                            PartialUpdateRoomOperation partialUpdateRoomOperation,
-                            AddRoomOperation addRoomOperation, UpdateRoomOperation updateRoomOperation,
-                            GetVisitorsOperation getVisitorsOperation,
-                            RegisterVisitorOperation registerVisitorOperation,
-                            AdminDeleteCommentOperation adminDeleteCommentOperation,
-                            AdminEditCommentOperation adminEditCommentOperation) {
+    public SystemController(JwtUtil jwtUtil, BffDeleteRoomOperation deleteRoomOperation,
+                            BffPartialUpdateRoomOperation partialUpdateRoomOperation,
+                            BffAddRoomOperation addRoomOperation, BffUpdateRoomOperation updateRoomOperation,
+                            BffGetVisitorsOperation getVisitorsOperation,
+                            BffRegisterVisitorOperation registerVisitorOperation,
+                            BffAdminDeleteCommentOperation adminDeleteCommentOperation,
+                            BffAdminEditCommentOperation adminEditCommentOperation) {
         super(jwtUtil);
         this.deleteRoomOperation = deleteRoomOperation;
         this.partialUpdateRoomOperation = partialUpdateRoomOperation;
@@ -75,8 +75,8 @@ public class SystemController extends BaseController {
             @ApiResponse(responseCode = "404", description = "Room id not found")
     })
     @PostMapping(RestApiRoutes.SYSTEM_REGISTER_VISITOR)
-    public ResponseEntity<?> registerVisitor(@RequestBody RegisterVisitorInput input) {
-        Either<Errors, RegisterVisitorOutput> output = registerVisitorOperation.process(input);
+    public ResponseEntity<?> registerVisitor(@RequestBody BffRegisterVisitorInput input) {
+        Either<Errors, BffRegisterVisitorOutput> output = registerVisitorOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.OK);
     }
@@ -90,11 +90,11 @@ public class SystemController extends BaseController {
     })
     @DeleteMapping(RestApiRoutes.SYSTEM_DELETE_ROOM)
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
-        DeleteRoomInput input = DeleteRoomInput.builder()
+        BffDeleteRoomInput input = BffDeleteRoomInput.builder()
                 .id(roomId)
                 .build();
 
-        Either<Errors, DeleteRoomOutput> output = deleteRoomOperation.process(input);
+        Either<Errors, BffDeleteRoomOutput> output = deleteRoomOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.OK);
     }
@@ -106,12 +106,12 @@ public class SystemController extends BaseController {
             @ApiResponse(responseCode = "404", description = "Room id not found"),
     })
     @PatchMapping(value = com.tinqinacademy.hotel.api.RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM, consumes = {"application/json-patch+json", "application/json"})
-    public ResponseEntity<?> partialUpdateRoom(@PathVariable String roomId, @RequestBody PartialUpdateRoomInput input) {
-        PartialUpdateRoomInput partialUpdateRoomInput = input.toBuilder()
+    public ResponseEntity<?> partialUpdateRoom(@PathVariable String roomId, @RequestBody BffPartialUpdateRoomInput input) {
+        BffPartialUpdateRoomInput partialUpdateRoomInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
 
-        Either<Errors, PartialUpdateRoomOutput> output = partialUpdateRoomOperation.process(partialUpdateRoomInput);
+        Either<Errors, BffPartialUpdateRoomOutput> output = partialUpdateRoomOperation.process(partialUpdateRoomInput);
 
         return mapToResponseEntity(output, HttpStatus.OK);
     }
@@ -123,8 +123,8 @@ public class SystemController extends BaseController {
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PostMapping(RestApiRoutes.SYSTEM_ADD_ROOM)
-    public ResponseEntity<?> addRoom(@RequestBody AddRoomInput input) {
-        Either<Errors, AddRoomOutput> output = addRoomOperation.process(input);
+    public ResponseEntity<?> addRoom(@RequestBody BffAddRoomInput input) {
+        Either<Errors, BffAddRoomOutput> output = addRoomOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.CREATED);
     }
@@ -137,12 +137,12 @@ public class SystemController extends BaseController {
             @ApiResponse(responseCode = "404", description = "Room id not found"),
     })
     @PutMapping(RestApiRoutes.SYSTEM_UPDATE_ROOM)
-    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @RequestBody UpdateRoomInput input) {
-        UpdateRoomInput updateRoomInput = input.toBuilder()
+    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @RequestBody BffUpdateRoomInput input) {
+        BffUpdateRoomInput updateRoomInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
 
-        Either<Errors, UpdateRoomOutput> output = updateRoomOperation.process(updateRoomInput);
+        Either<Errors, BffUpdateRoomOutput> output = updateRoomOperation.process(updateRoomInput);
 
         return mapToResponseEntity(output, HttpStatus.OK);
     }
@@ -167,7 +167,7 @@ public class SystemController extends BaseController {
             @RequestParam(required = false) LocalDate idCardIssueDate,
             @RequestParam(required = false) String roomNumber
     ) {
-        GetVisitorsInput input = GetVisitorsInput.builder()
+        BffGetVisitorsInput input = BffGetVisitorsInput.builder()
                 .startDate(startDate)
                 .endDate(endDate)
                 .firstName(firstName)
@@ -180,7 +180,7 @@ public class SystemController extends BaseController {
                 .roomNumber(roomNumber)
                 .build();
 
-        Either<Errors, GetVisitorsOutput> output = getVisitorsOperation.process(input);
+        Either<Errors, BffGetVisitorsOutput> output = getVisitorsOperation.process(input);
 
         return mapToResponseEntity(output, HttpStatus.OK);
     }
@@ -192,11 +192,11 @@ public class SystemController extends BaseController {
     })
     @DeleteMapping(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT)
     public ResponseEntity<?> adminDeleteComment(@PathVariable String commentId) {
-        AdminDeleteCommentInput input = AdminDeleteCommentInput.builder()
+        BffAdminDeleteCommentInput input = BffAdminDeleteCommentInput.builder()
                 .commentId(commentId)
                 .build();
 
-        Either<Errors, AdminDeleteCommentOutput> output = adminDeleteCommentOperation.process(input);
+        Either<Errors, BffAdminDeleteCommentOutput> output = adminDeleteCommentOperation.process(input);
         return mapToResponseEntity(output, HttpStatus.OK);
     }
 
@@ -209,13 +209,13 @@ public class SystemController extends BaseController {
     public ResponseEntity<?> adminEditComment(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String jwtHeader,
             @PathVariable String commentId,
-            @RequestBody AdminEditCommentInput input) {
-        AdminEditCommentInput adminEditCommentInput = input.toBuilder()
+            @RequestBody BffAdminEditCommentInput input) {
+        BffAdminEditCommentInput adminEditCommentInput = input.toBuilder()
                 .commentId(commentId)
                 .adminId(extractUserIdFromToken(jwtHeader))
                 .build();
 
-        Either<Errors, AdminEditCommentOutput> output = adminEditCommentOperation.process(adminEditCommentInput);
+        Either<Errors, BffAdminEditCommentOutput> output = adminEditCommentOperation.process(adminEditCommentInput);
         return mapToResponseEntity(output, HttpStatus.OK);
     }
 

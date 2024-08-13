@@ -1,14 +1,13 @@
 package com.tinqinacademy.bff.core.processors.hotel;
 
-import com.tinqinacademy.bff.api.base.OperationInput;
-import com.tinqinacademy.bff.api.base.OperationProcessor;
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentInput;
-import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentOperation;
-import com.tinqinacademy.bff.api.operations.hotel.addcomment.AddCommentOutput;
-import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.CheckAvailableRoomsOutput;
+import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentInput;
+import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOperation;
+import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentInput;
+import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class AddCommentOperationProcessor extends BaseOperationProcessor implements AddCommentOperation {
+public class AddCommentOperationProcessor extends BaseOperationProcessor implements BffAddCommentOperation {
     private final CommentsRestExport commentsRestExport;
     private final HotelRestExport hotelRestExport;
 
@@ -38,17 +37,16 @@ public class AddCommentOperationProcessor extends BaseOperationProcessor impleme
     }
 
     @Override
-    public Either<Errors, AddCommentOutput> process(AddCommentInput input) {
+    public Either<Errors, BffAddCommentOutput> process(BffAddCommentInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
                     validateRoomId(input.getRoomId());
 
-                    com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput commentsOutput =
-                            commentsRestExport.addComment(input.getRoomId(), conversionService.convert(input,
-                                    com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentInput.class));
+                    AddCommentOutput commentsOutput = commentsRestExport
+                            .addComment(input.getRoomId(), conversionService.convert(input, AddCommentInput.class));
 
-                    AddCommentOutput output = conversionService.convert(commentsOutput, AddCommentOutput.class);
+                    BffAddCommentOutput output = conversionService.convert(commentsOutput, BffAddCommentOutput.class);
 
                     log.info("End process result:{}", output);
 

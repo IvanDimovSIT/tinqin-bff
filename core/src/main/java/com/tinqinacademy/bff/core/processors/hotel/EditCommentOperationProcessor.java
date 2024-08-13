@@ -1,11 +1,13 @@
 package com.tinqinacademy.bff.core.processors.hotel;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentInput;
-import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentOperation;
-import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentOutput;
+import com.tinqinacademy.bff.api.operations.hotel.editcomment.BffEditCommentInput;
+import com.tinqinacademy.bff.api.operations.hotel.editcomment.BffEditCommentOperation;
+import com.tinqinacademy.bff.api.operations.hotel.editcomment.BffEditCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentInput;
+import com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class EditCommentOperationProcessor extends BaseOperationProcessor implements EditCommentOperation {
+public class EditCommentOperationProcessor extends BaseOperationProcessor implements BffEditCommentOperation {
     private final CommentsRestExport commentsRestExport;
 
     public EditCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -26,18 +28,17 @@ public class EditCommentOperationProcessor extends BaseOperationProcessor implem
     }
 
     @Override
-    public Either<Errors, EditCommentOutput> process(EditCommentInput input) {
+    public Either<Errors, BffEditCommentOutput> process(BffEditCommentInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
 
-                    com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentInput commentInput =
-                            conversionService.convert(input, com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentInput.class);
+                    EditCommentInput commentInput = conversionService.convert(input, EditCommentInput.class);
 
-                    com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentOutput commentsOutput =
-                            commentsRestExport.editComment(input.getCommentId(), commentInput);
+                    EditCommentOutput commentsOutput = commentsRestExport
+                            .editComment(input.getCommentId(), commentInput);
 
-                    EditCommentOutput output = conversionService.convert(commentsOutput, EditCommentOutput.class);
+                    BffEditCommentOutput output = conversionService.convert(commentsOutput, BffEditCommentOutput.class);
 
                     log.info("End process result:{}", output);
 

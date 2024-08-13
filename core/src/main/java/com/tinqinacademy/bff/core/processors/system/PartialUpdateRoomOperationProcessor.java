@@ -1,12 +1,13 @@
 package com.tinqinacademy.bff.core.processors.system;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.system.deleteroom.DeleteRoomOutput;
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomInput;
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOperation;
-import com.tinqinacademy.bff.api.operations.system.partialupdateroom.PartialUpdateRoomOutput;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomInput;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomOperation;
+import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor implements PartialUpdateRoomOperation {
+public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor implements BffPartialUpdateRoomOperation {
     private final HotelRestExport hotelRestExport;
 
     public PartialUpdateRoomOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -27,16 +28,16 @@ public class PartialUpdateRoomOperationProcessor extends BaseOperationProcessor 
     }
 
     @Override
-    public Either<Errors, PartialUpdateRoomOutput> process(PartialUpdateRoomInput input) {
+    public Either<Errors, BffPartialUpdateRoomOutput> process(BffPartialUpdateRoomInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
 
-                    com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomOutput hotelOutput =
-                            hotelRestExport.partialUpdateRoom(input.getRoomId(), conversionService.convert(input,
-                                    com.tinqinacademy.hotel.api.operations.system.partialupdateroom.PartialUpdateRoomInput.class));
+                    PartialUpdateRoomOutput hotelOutput = hotelRestExport.partialUpdateRoom(
+                            input.getRoomId(), conversionService.convert(input, PartialUpdateRoomInput.class));
 
-                    PartialUpdateRoomOutput output = conversionService.convert(hotelOutput, PartialUpdateRoomOutput.class);
+                    BffPartialUpdateRoomOutput output = conversionService
+                            .convert(hotelOutput, BffPartialUpdateRoomOutput.class);
 
                     log.info("End process result:{}", output);
 

@@ -1,12 +1,12 @@
 package com.tinqinacademy.bff.core.processors.hotel;
 
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.operations.hotel.editcomment.EditCommentOutput;
-import com.tinqinacademy.bff.api.operations.hotel.getcomments.GetCommentsInput;
-import com.tinqinacademy.bff.api.operations.hotel.getcomments.GetCommentsOperation;
-import com.tinqinacademy.bff.api.operations.hotel.getcomments.GetCommentsOutput;
+import com.tinqinacademy.bff.api.operations.hotel.getcomments.BffGetCommentsInput;
+import com.tinqinacademy.bff.api.operations.hotel.getcomments.BffGetCommentsOperation;
+import com.tinqinacademy.bff.api.operations.hotel.getcomments.BffGetCommentsOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.comments.api.operations.hotel.getcomments.GetCommentsOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class GetCommentsOperationProcessor extends BaseOperationProcessor implements GetCommentsOperation {
+public class GetCommentsOperationProcessor extends BaseOperationProcessor implements BffGetCommentsOperation {
     private final CommentsRestExport commentsRestExport;
 
     public GetCommentsOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
@@ -27,17 +27,17 @@ public class GetCommentsOperationProcessor extends BaseOperationProcessor implem
     }
 
     @Override
-    public Either<Errors, GetCommentsOutput> process(GetCommentsInput input) {
+    public Either<Errors, BffGetCommentsOutput> process(BffGetCommentsInput input) {
         return Try.of(() -> {
                     log.info("Start process input:{}", input);
                     validate(input);
 
 
-                    com.tinqinacademy.comments.api.operations.hotel.getcomments.GetCommentsOutput commentsOutput =
+                    GetCommentsOutput commentsOutput =
                             commentsRestExport.getComments(input.getRoomId());
 
-                    GetCommentsOutput output =
-                            conversionService.convert(commentsOutput, GetCommentsOutput.class);
+                    BffGetCommentsOutput output =
+                            conversionService.convert(commentsOutput, BffGetCommentsOutput.class);
 
                     log.info("End process result:{}", output);
 
