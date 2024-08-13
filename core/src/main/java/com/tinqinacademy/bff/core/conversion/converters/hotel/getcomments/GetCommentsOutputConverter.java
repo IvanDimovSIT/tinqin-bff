@@ -17,8 +17,7 @@ public class GetCommentsOutputConverter extends BaseConverter<GetCommentsOutput,
                 .map(comment -> CommentOutput.builder()
                         .id(comment.getId())
                         .content(comment.getContent())
-                        .firstName(comment.getFirstName()) // TODO: set user data??
-                        .lastName(comment.getLastName())
+                        .userId(comment.getUserId())
                         .lastEditedDate(comment.getLastEditedDate())
                         .lastEditedBy(comment.getLastEditedBy())
                         .publishDate(comment.getPublishDate())

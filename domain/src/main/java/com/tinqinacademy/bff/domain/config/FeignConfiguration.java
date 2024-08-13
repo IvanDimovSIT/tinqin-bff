@@ -33,14 +33,6 @@ public class FeignConfiguration {
                 .client(new OkHttpClient())
                 .encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
-                //.decoder((response, type) -> {
-                //    if (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType().equals(ResponseEntity.class)) {
-                //        JavaType innerType = objectMapper.getTypeFactory().constructType(((ParameterizedType) type).getActualTypeArguments()[0]);
-                //        Object body = objectMapper.readValue(response.body().asInputStream(), innerType);
-                //        return ResponseEntity.status(response.status()).body(body);
-                //    }
-                //    return new JacksonDecoder().decode(response, type);
-                //})
                 .target(HotelRestExport.class,"http://localhost:8080");
 
     }
