@@ -2,7 +2,7 @@ package com.tinqinacademy.bff.api.operations.system.admineditcomment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.bff.api.base.OperationInput;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.UUID;
 
@@ -17,10 +17,10 @@ public class BffAdminEditCommentInput implements OperationInput {
     @UUID
     private String commentId;
     @JsonIgnore
-    @NotEmpty
+    @NotBlank
     private String adminId;
-    @NotEmpty
+    @NotBlank
     private String roomId;
-    @NotEmpty
+    @NotBlank
     private String content;
 }

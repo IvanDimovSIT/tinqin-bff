@@ -32,7 +32,7 @@ public class BffAddRoomInput implements OperationInput {
     @Min(value = 1)
     @Max(value = 20)
     private Integer floor;
-    @NotEmpty
+    @NotBlank
     @Pattern(regexp = "[0-9]{1,10}[A-Z]?", message = "Valid room numbers start with numbers and could end with a letter")
     private String roomNumber;
     @Positive

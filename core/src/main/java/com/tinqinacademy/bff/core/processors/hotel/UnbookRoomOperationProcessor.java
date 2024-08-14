@@ -6,6 +6,7 @@ import com.tinqinacademy.bff.api.operations.hotel.unbookroom.BffUnbookRoomOperat
 import com.tinqinacademy.bff.api.operations.hotel.unbookroom.BffUnbookRoomOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
@@ -32,7 +33,8 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
                     log.info("Start process input:{}", input);
                     validate(input);
 
-                    UnbookRoomOutput hotelOutput = hotelRestExport.unbookRoom(input.getBookingId());
+                    UnbookRoomInput hotelInput = conversionService.convert(input, UnbookRoomInput.class);
+                    UnbookRoomOutput hotelOutput = hotelRestExport.unbookRoom(input.getBookingId(), hotelInput);
 
                     BffUnbookRoomOutput output = conversionService.convert(hotelOutput, BffUnbookRoomOutput.class);
 
