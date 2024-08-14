@@ -2,8 +2,8 @@ package com.tinqinacademy.bff.api.operations.system.updateroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.bff.api.base.OperationInput;
-import com.tinqinacademy.bff.api.model.enums.BathroomType;
-import com.tinqinacademy.bff.api.model.enums.BedSize;
+import com.tinqinacademy.bff.api.model.enums.BffBathroomType;
+import com.tinqinacademy.bff.api.model.enums.BffBedSize;
 import com.tinqinacademy.bff.api.validation.bathroomtype.ValidBathroomType;
 import com.tinqinacademy.bff.api.validation.bedsize.ValidBedSize;
 import jakarta.validation.constraints.*;
@@ -28,10 +28,10 @@ public class BffUpdateRoomInput implements OperationInput {
     private Integer bedCount;
     @NotNull
     @ValidBedSize
-    private BedSize bedSize;
+    private BffBedSize bedSize;
     @NotNull
     @ValidBathroomType
-    private BathroomType bathroomType;
+    private BffBathroomType bathroomType;
     @NotNull
     @Min(value = 1)
     @Max(value = 20)

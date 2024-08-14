@@ -26,7 +26,7 @@ public class BffCheckAvailableRoomsInput implements OperationInput {
     @Max(10)
     private Integer bedCount;
     @ValidBedSize
-    private BedSize bedSize;
+    private BffBedSize bedSize;
     @ValidBathroomType
-    private BathroomType bathroomType;
+    private BffBathroomType bathroomType;
 }

@@ -1,13 +1,7 @@
 package com.tinqinacademy.bff.rest.security;
 
-import com.tinqinacademy.authentication.api.model.enums.UserRole;
 import lombok.*;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
-import java.util.List;
 
 @ToString
 @Getter

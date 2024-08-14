@@ -5,20 +5,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 
-public enum BathroomType {
+public enum BffBathroomType {
     PRIVATE("private"),
     SHARED("shared"),
     UNKNOWN("");
 
     private final String code;
 
-    BathroomType(String code){
+    BffBathroomType(String code){
         this.code = code;
     }
 
     @JsonCreator
-    public static BathroomType getCode(String code) {
-        return Arrays.stream(BathroomType.values())
+    public static BffBathroomType getCode(String code) {
+        return Arrays.stream(BffBathroomType.values())
                 .filter(bathroomType -> bathroomType.code.equals(code))
                 .findFirst()
                 .orElse(UNKNOWN);

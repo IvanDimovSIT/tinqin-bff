@@ -6,6 +6,7 @@ import com.tinqinacademy.bff.api.operations.hotel.getroom.BffGetRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.getroom.BffGetRoomOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -31,7 +32,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
                     log.info("Start getRoom input:{}", input);
                     validate(input);
 
-                    com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput hotelOutput =
+                    GetRoomOutput hotelOutput =
                             hotelRestExport.getRoom(input.getId());
 
                     BffGetRoomOutput output = conversionService.convert(hotelOutput, BffGetRoomOutput.class);

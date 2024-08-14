@@ -15,9 +15,9 @@ public class AddRoomInputConverter extends BaseConverter<BffAddRoomInput, AddRoo
     protected AddRoomInput convertObject(BffAddRoomInput source) {
         return AddRoomInput.builder()
                 .roomNumber(source.getRoomNumber())
-                .bathroomType(source.getBathroomType() == null? null: BathroomType.getCode(source.getBathroomType().toString()))
+                .bathroomType(source.getBathroomType() == null ? null : BathroomType.getCode(source.getBathroomType().toString()))
                 .floor(source.getFloor())
-                .bedSize(source.getBedSize() == null? null: BedSize.getCode(source.getBedSize().toString()))
+                .bedSize(source.getBedSize() == null ? null : BedSize.getCode(source.getBedSize().toString()))
                 .price(source.getPrice())
                 .bedCount(source.getBedCount())
                 .build();
