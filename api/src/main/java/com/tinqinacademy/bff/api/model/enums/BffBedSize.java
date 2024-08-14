@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 
-public enum BedSize {
+public enum BffBedSize {
     SINGLE("single"),
     DOUBLE("double"),
     SMALL_DOUBLE("smallDouble"),
@@ -15,13 +15,13 @@ public enum BedSize {
 
     private final String code;
 
-    BedSize(String code) {
+    BffBedSize(String code) {
         this.code = code;
     }
 
     @JsonCreator
-    public static BedSize getCode(String code) {
-        return Arrays.stream(BedSize.values())
+    public static BffBedSize getCode(String code) {
+        return Arrays.stream(BffBedSize.values())
                 .filter(bedSize -> bedSize.code.equals(code))
                 .findFirst()
                 .orElse(UNKNOWN);

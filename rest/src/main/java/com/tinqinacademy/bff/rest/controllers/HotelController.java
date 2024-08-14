@@ -2,8 +2,8 @@ package com.tinqinacademy.bff.rest.controllers;
 
 import com.tinqinacademy.bff.api.RestApiRoutes;
 import com.tinqinacademy.bff.api.errors.Errors;
-import com.tinqinacademy.bff.api.model.enums.BathroomType;
-import com.tinqinacademy.bff.api.model.enums.BedSize;
+import com.tinqinacademy.bff.api.model.enums.BffBathroomType;
+import com.tinqinacademy.bff.api.model.enums.BffBedSize;
 import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOperation;
 import com.tinqinacademy.bff.api.operations.hotel.bookroom.BffBookRoomOperation;
 import com.tinqinacademy.bff.api.operations.hotel.checkavailablerooms.BffCheckAvailableRoomsOperation;
@@ -96,8 +96,8 @@ public class HotelController extends BaseController {
                 .startDate(startDate)
                 .endDate(endDate)
                 .bedCount(bedCount)
-                .bedSize(bedSize ==null? null: BedSize.getCode(bedSize))
-                .bathroomType(bathroomType == null? null: BathroomType.getCode(bathroomType))
+                .bedSize(bedSize == null ? null : BffBedSize.getCode(bedSize))
+                .bathroomType(bathroomType == null ? null : BffBathroomType.getCode(bathroomType))
                 .build();
 
 

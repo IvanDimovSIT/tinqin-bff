@@ -31,7 +31,7 @@ public class SwaggerConfig {
     @Bean
     public OperationCustomizer customizeGlobalHeaders() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            if(operation == null || operation.getParameters() == null){
+            if (operation == null || operation.getParameters() == null) {
                 return operation;
             }
             operation.getParameters().removeIf(parameter ->
