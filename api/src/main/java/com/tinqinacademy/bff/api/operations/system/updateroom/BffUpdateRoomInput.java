@@ -36,7 +36,7 @@ public class BffUpdateRoomInput implements OperationInput {
     @Min(value = 1)
     @Max(value = 20)
     private Integer floor;
-    @NotEmpty
+    @NotBlank
     @Pattern(regexp = "[0-9]{1,10}[A-Z]?")
     private String roomNumber;
     @Positive

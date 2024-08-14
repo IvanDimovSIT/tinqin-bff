@@ -1,8 +1,9 @@
 package com.tinqinacademy.bff.api.operations.hotel.unbookroom;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.bff.api.base.OperationInput;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.UUID;
 
@@ -13,7 +14,11 @@ import org.hibernate.validator.constraints.UUID;
 @Getter
 @Setter
 public class BffUnbookRoomInput implements OperationInput {
-    @NotEmpty
+    @JsonIgnore
+    @UUID
+    @NotBlank
+    private String userId;
+    @NotBlank
     @UUID
     private String bookingId;
 }

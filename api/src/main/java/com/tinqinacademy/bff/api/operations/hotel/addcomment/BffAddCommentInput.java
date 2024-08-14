@@ -2,7 +2,8 @@ package com.tinqinacademy.bff.api.operations.hotel.addcomment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.bff.api.base.OperationInput;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.UUID;
 
@@ -17,8 +18,8 @@ public class BffAddCommentInput implements OperationInput {
     @UUID
     private String roomId;
     @JsonIgnore
-    @NotEmpty
+    @NotBlank
     private String authorId;
-    @NotEmpty
+    @NotBlank
     private String content;
 }

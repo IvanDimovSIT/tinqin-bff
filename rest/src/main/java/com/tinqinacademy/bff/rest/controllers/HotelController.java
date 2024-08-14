@@ -134,9 +134,11 @@ public class HotelController extends BaseController {
             @ApiResponse(responseCode = "404", description = "Booking id not found"),
     })
     @DeleteMapping(RestApiRoutes.HOTEL_UNBOOK_ROOM)
-    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId) {
+    public ResponseEntity<?> unbookRoom(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwtHeader,
+                                        @PathVariable String bookingId) {
         BffUnbookRoomInput input = BffUnbookRoomInput.builder()
                 .bookingId(bookingId)
+                .userId(extractUserIdFromToken(jwtHeader))
                 .build();
 
         Either<Errors, BffUnbookRoomOutput> output = unbookRoomOperation.process(input);
