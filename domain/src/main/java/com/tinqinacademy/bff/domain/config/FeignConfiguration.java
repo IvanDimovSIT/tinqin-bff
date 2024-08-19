@@ -11,7 +11,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,13 @@ import java.lang.reflect.ParameterizedType;
 public class FeignConfiguration {
     private final ObjectMapper objectMapper;
 
+    @Value("${hotel.url}")
+    private String hotelUrl;
+    @Value("${comments.url}")
+    private String commentsUrl;
+    @Value("${authentication.url}")
+    private String authenticationUrl;
+
     @Bean
     public Contract useFeignAnnotations() {return new Contract.Default();}
 
@@ -33,7 +40,7 @@ public class FeignConfiguration {
                 .client(new OkHttpClient())
                 .encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
-                .target(HotelRestExport.class,"http://localhost:8080");
+                .target(HotelRestExport.class, hotelUrl);
 
     }
 
@@ -43,7 +50,7 @@ public class FeignConfiguration {
                 .client(new OkHttpClient())
                 .encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
-                .target(CommentsRestExport.class,"http://localhost:8081");
+                .target(CommentsRestExport.class, commentsUrl);
 
     }
 
@@ -53,7 +60,7 @@ public class FeignConfiguration {
                 .client(new OkHttpClient())
                 .encoder(new JacksonEncoder(objectMapper))
                 .decoder(new JacksonDecoder(objectMapper))
-                .target(AuthenticationRestExport.class,"http://localhost:8082");
+                .target(AuthenticationRestExport.class, authenticationUrl);
 
     }
 }
