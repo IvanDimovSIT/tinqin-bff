@@ -33,6 +33,12 @@
             <artifactId>restexport</artifactId>
             <version>${comments.restexport.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.tinqinacademy.search</groupId>
+            <artifactId>restexport</artifactId>
+            <version>${search.restexport.version}</version>
+        </dependency>
     </dependencies>
 
 

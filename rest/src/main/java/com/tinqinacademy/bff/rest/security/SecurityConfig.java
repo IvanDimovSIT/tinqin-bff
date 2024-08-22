@@ -40,7 +40,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, RestApiRoutes.HOTEL_BOOK_ROOM).hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, RestApiRoutes.HOTEL_UNBOOK_ROOM).hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.POST, RestApiRoutes.HOTEL_ADD_COMMENT).hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PATCH, RestApiRoutes.HOTEL_EDIT_COMMENT).hasAnyRole("USER", "ADMIN");
+                .requestMatchers(HttpMethod.PATCH, RestApiRoutes.HOTEL_EDIT_COMMENT).hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.GET, RestApiRoutes.SEARCH_FIND_COMMENTS_WORDS).hasAnyRole("USER", "ADMIN");
     }
 
     @Bean
