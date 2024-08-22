@@ -21,7 +21,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,9 +46,17 @@ public class AddCommentOperationProcessor extends BaseOperationProcessor impleme
         GetRoomOutput hotelOutput = hotelRestExport.getRoom(roomId);
     }
 
-    private void sendMessageAddWords(String id, String content){
-        List<WordMessage> messages = Arrays.stream(content.split(" "))
+    private List<String> splitIntoWords(String text) {
+        return Arrays.stream(text.split("[\\s\\p{Punct}]+"))
                 .filter(word -> !word.isBlank())
+                .toList();
+    }
+
+    private void sendMessageAddWords(String id, String content){
+        Set<String> uniqueWords = new HashSet<>(splitIntoWords(content));
+
+        List<WordMessage> messages = uniqueWords
+                .stream()
                 .map(word -> WordMessage.builder()
                         .id(id)
                         .word(word)
