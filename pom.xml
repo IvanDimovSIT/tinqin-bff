@@ -24,6 +24,7 @@
         <hotel.restexport.version>0.0.1-SNAPSHOT</hotel.restexport.version>
         <comments.restexport.version>0.0.1-SNAPSHOT</comments.restexport.version>
         <authentication.restexport.version>0.0.1-SNAPSHOT</authentication.restexport.version>
+        <search.restexport.version>0.0.1-SNAPSHOT</search.restexport.version>
     </properties>
 
     <modules>

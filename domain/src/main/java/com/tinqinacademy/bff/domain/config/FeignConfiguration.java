@@ -1,10 +1,10 @@
 package com.tinqinacademy.bff.domain.config;
 
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.authentication.restexport.AuthenticationRestExport;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
+import com.tinqinacademy.search.restexport.SearchRestExport;
 import feign.Contract;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
@@ -14,9 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
-
-import java.lang.reflect.ParameterizedType;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,6 +26,8 @@ public class FeignConfiguration {
     private String commentsUrl;
     @Value("${authentication.url}")
     private String authenticationUrl;
+    @Value("${search.url}")
+    private String searchUrl;
 
     @Bean
     public Contract useFeignAnnotations() {return new Contract.Default();}
@@ -62,5 +61,14 @@ public class FeignConfiguration {
                 .decoder(new JacksonDecoder(objectMapper))
                 .target(AuthenticationRestExport.class, authenticationUrl);
 
+    }
+
+    @Bean
+    public SearchRestExport searchRestExport() {
+        return Feign.builder()
+                .client(new OkHttpClient())
+                .encoder(new JacksonEncoder(objectMapper))
+                .decoder(new JacksonDecoder(objectMapper))
+                .target(SearchRestExport.class, searchUrl);
     }
 }

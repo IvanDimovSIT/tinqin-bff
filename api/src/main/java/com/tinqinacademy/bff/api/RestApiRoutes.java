@@ -5,6 +5,7 @@ public class RestApiRoutes {
 
     public static final String HOTEL_BASE =  API + "/hotel";
     public static final String SYSTEM_BASE = API + "/system";
+    public static final String SEARCH_BASE = API + "/search";
 
     public static final String HOTEL_GET_AVAILABLE_ROOMS = HOTEL_BASE + "/rooms";
     public static final String HOTEL_GET_ROOM = HOTEL_BASE + "/{roomId}";
@@ -22,4 +23,6 @@ public class RestApiRoutes {
     public static final String SYSTEM_DELETE_ROOM = SYSTEM_BASE + "/room/{roomId}";
     public static final String SYSTEM_ADMIN_EDIT_COMMENT = SYSTEM_BASE + "/comment/{commentId}";
     public static final String SYSTEM_ADMIN_DELETE_COMMENT = SYSTEM_BASE + "/comment/{commentId}";
+
+    public static final String SEARCH_FIND_COMMENTS_WORDS = SEARCH_BASE + "/comments/{word}";
 }
