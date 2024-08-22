@@ -15,12 +15,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>com.tinqinacademy.bff</groupId>
-            <artifactId>api</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
 </project>
