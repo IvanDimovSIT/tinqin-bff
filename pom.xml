@@ -32,9 +32,15 @@
         <module>core</module>
         <module>persistence</module>
         <module>domain</module>
+        <module>kafka</module>
     </modules>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>me.paulschwarz</groupId>
             <artifactId>spring-dotenv</artifactId>

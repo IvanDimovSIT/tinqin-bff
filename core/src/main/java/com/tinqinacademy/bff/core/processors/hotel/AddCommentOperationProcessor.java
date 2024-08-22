@@ -6,9 +6,12 @@ import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOperat
 import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.bff.kafka.KafkaProducer;
+import com.tinqinacademy.bff.kafka.model.WordMessage;
 import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentInput;
 import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -17,23 +20,41 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Slf4j
 @Service
 public class AddCommentOperationProcessor extends BaseOperationProcessor implements BffAddCommentOperation {
     private final CommentsRestExport commentsRestExport;
     private final HotelRestExport hotelRestExport;
+    private final KafkaProducer kafkaProducer;
 
     public AddCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
                                         Validator validator, CommentsRestExport commentsRestExport,
-                                        HotelRestExport hotelRestExport) {
+                                        HotelRestExport hotelRestExport, KafkaProducer kafkaProducer) {
         super(conversionService, errorMapper, validator);
         this.commentsRestExport = commentsRestExport;
         this.hotelRestExport = hotelRestExport;
+        this.kafkaProducer = kafkaProducer;
     }
 
     private void validateRoomId(String roomId){
-        com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput hotelOutput =
-                hotelRestExport.getRoom(roomId);
+        GetRoomOutput hotelOutput = hotelRestExport.getRoom(roomId);
+    }
+
+    private void sendMessageAddWords(String id, String content){
+        List<WordMessage> messages = Arrays.stream(content.split(" "))
+                .filter(word -> !word.isBlank())
+                .map(word -> WordMessage.builder()
+                        .id(id)
+                        .word(word)
+                        .build())
+                .toList();
+
+        for (WordMessage message : messages) {
+            kafkaProducer.sendWordMessage(message);
+        }
     }
 
     @Override
@@ -47,6 +68,7 @@ public class AddCommentOperationProcessor extends BaseOperationProcessor impleme
                             .addComment(input.getRoomId(), conversionService.convert(input, AddCommentInput.class));
 
                     BffAddCommentOutput output = conversionService.convert(commentsOutput, BffAddCommentOutput.class);
+                    sendMessageAddWords(commentsOutput.getId(), input.getContent());
 
                     log.info("End process result:{}", output);
 
