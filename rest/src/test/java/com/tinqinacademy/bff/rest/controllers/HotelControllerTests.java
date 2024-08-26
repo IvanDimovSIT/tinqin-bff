@@ -1,7 +1,6 @@
 package com.tinqinacademy.bff.rest.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tinqinacademy.authentication.api.model.enums.UserRole;
 import com.tinqinacademy.authentication.api.operations.authenticate.AuthenticateOutput;
 import com.tinqinacademy.authentication.restexport.AuthenticationRestExport;
 import com.tinqinacademy.bff.api.exception.exceptions.NotFoundException;
@@ -9,6 +8,7 @@ import com.tinqinacademy.bff.api.model.enums.BffBathroomType;
 import com.tinqinacademy.bff.api.model.enums.BffBedSize;
 import com.tinqinacademy.bff.core.security.JwtToken;
 import com.tinqinacademy.bff.core.security.JwtUtil;
+import com.tinqinacademy.bff.kafka.KafkaProducer;
 import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentInput;
 import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput;
 import com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentInput;
@@ -24,18 +24,17 @@ import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 import com.tinqinacademy.hotel.restexport.HotelRestExport;
 import feign.FeignException;
-import jakarta.validation.constraints.Max;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -43,6 +42,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,11 +55,7 @@ public class HotelControllerTests {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ObjectMapper mapper;
-    @Qualifier("objectMapper")
-    @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private HotelRestExport hotelRestExport;
     @MockBean
@@ -68,6 +64,8 @@ public class HotelControllerTests {
     private AuthenticationRestExport authenticationRestExport;
     @MockBean
     private JwtUtil jwtUtil;
+    @MockBean
+    private KafkaProducer kafkaProducer;
 
 
     @BeforeEach
@@ -85,6 +83,18 @@ public class HotelControllerTests {
         mvc.perform(get(RestApiRoutes.HOTEL_GET_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetRoomBadRequest() throws Exception {
+        String roomId = "abc";
+
+        when(hotelRestExport.getRoom(roomId))
+                .thenReturn(new GetRoomOutput());
+
+        mvc.perform(get(RestApiRoutes.HOTEL_GET_ROOM, roomId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -167,7 +177,7 @@ public class HotelControllerTests {
         mvc.perform(post(RestApiRoutes.HOTEL_BOOK_ROOM, roomId)
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(bookRoomInput))
+                .content(objectMapper.writeValueAsString(bookRoomInput))
         ).andExpect(status().isCreated());
     }
 
@@ -196,7 +206,7 @@ public class HotelControllerTests {
         mvc.perform(post(RestApiRoutes.HOTEL_BOOK_ROOM, roomId)
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(bookRoomInput))
+                .content(objectMapper.writeValueAsString(bookRoomInput))
         ).andExpect(status().isBadRequest());
     }
 
@@ -220,7 +230,7 @@ public class HotelControllerTests {
         mvc.perform(post(RestApiRoutes.HOTEL_BOOK_ROOM, roomId)
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(bookRoomInput))
+                .content(objectMapper.writeValueAsString(bookRoomInput))
         ).andExpect(status().isForbidden());
     }
 
@@ -251,7 +261,7 @@ public class HotelControllerTests {
 
         mvc.perform(delete(RestApiRoutes.HOTEL_UNBOOK_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
         ).andExpect(status().isOk());
     }
@@ -283,7 +293,7 @@ public class HotelControllerTests {
 
         mvc.perform(delete(RestApiRoutes.HOTEL_UNBOOK_ROOM, roomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
         ).andExpect(status().isBadRequest());
     }
@@ -305,7 +315,7 @@ public class HotelControllerTests {
 
         mvc.perform(delete(RestApiRoutes.HOTEL_UNBOOK_ROOM, roomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
         ).andExpect(status().isForbidden());
     }
 
@@ -336,7 +346,7 @@ public class HotelControllerTests {
 
         mvc.perform(delete(RestApiRoutes.HOTEL_UNBOOK_ROOM, roomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer abc")
         ).andExpect(status().isForbidden());
     }
@@ -363,12 +373,13 @@ public class HotelControllerTests {
         when(authenticationRestExport.authenticate(jwtHeader))
                 .thenReturn(AuthenticateOutput.builder().build());
 
-        when(commentsRestExport.addComment(roomId, input))
-                .thenReturn(AddCommentOutput.builder().build());
+        when(commentsRestExport.addComment(any(), any()))
+                .thenReturn(AddCommentOutput.builder().id(UUID.randomUUID().toString())
+                        .build());
 
         mvc.perform(post(RestApiRoutes.HOTEL_ADD_COMMENT, roomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
         ).andExpect(status().isCreated());
     }
@@ -396,11 +407,12 @@ public class HotelControllerTests {
                 .thenReturn(AuthenticateOutput.builder().build());
 
         when(commentsRestExport.addComment(roomId, input))
-                .thenReturn(AddCommentOutput.builder().build());
+                .thenReturn(AddCommentOutput.builder()
+                        .id(UUID.randomUUID().toString()).build());
 
         mvc.perform(post(RestApiRoutes.HOTEL_ADD_COMMENT, roomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
         ).andExpect(status().isBadRequest());
     }
@@ -432,7 +444,7 @@ public class HotelControllerTests {
 
         mvc.perform(post(RestApiRoutes.HOTEL_ADD_COMMENT, roomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer abc")
         ).andExpect(status().isForbidden());
     }
@@ -463,7 +475,7 @@ public class HotelControllerTests {
 
         mvc.perform(patch(RestApiRoutes.HOTEL_EDIT_COMMENT, commentId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
         ).andExpect(status().isOk());
     }
@@ -494,7 +506,7 @@ public class HotelControllerTests {
 
         mvc.perform(patch(RestApiRoutes.HOTEL_EDIT_COMMENT, commentId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
                 .header(HttpHeaders.AUTHORIZATION, jwtHeader)
         ).andExpect(status().isBadRequest());
     }
@@ -516,7 +528,7 @@ public class HotelControllerTests {
 
         mvc.perform(patch(RestApiRoutes.HOTEL_EDIT_COMMENT, commentId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(input))
+                .content(objectMapper.writeValueAsString(input))
         ).andExpect(status().isForbidden());
     }
 

@@ -8,12 +8,16 @@ import com.tinqinacademy.bff.api.model.enums.BffBathroomType;
 import com.tinqinacademy.bff.api.model.enums.BffBedSize;
 import com.tinqinacademy.bff.api.model.visitor.VisitorInput;
 import com.tinqinacademy.bff.api.operations.system.addroom.BffAddRoomInput;
+import com.tinqinacademy.bff.api.operations.system.admineditcomment.BffAdminEditCommentInput;
 import com.tinqinacademy.bff.api.operations.system.partialupdateroom.BffPartialUpdateRoomInput;
 import com.tinqinacademy.bff.api.operations.system.registervisitor.BffRegisterVisitorInput;
 import com.tinqinacademy.bff.api.operations.system.updateroom.BffUpdateRoomInput;
 import com.tinqinacademy.bff.core.security.JwtToken;
 import com.tinqinacademy.bff.core.security.JwtUtil;
-import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentOutput;
+import com.tinqinacademy.bff.kafka.KafkaProducer;
+import com.tinqinacademy.comments.api.operations.system.admindeletecomment.AdminDeleteCommentOutput;
+import com.tinqinacademy.comments.api.operations.system.admineditcomment.AdminEditCommentInput;
+import com.tinqinacademy.comments.api.operations.system.admineditcomment.AdminEditCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
@@ -34,12 +38,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -59,11 +63,7 @@ public class SystemControllerTests {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ObjectMapper mapper;
-    @Qualifier("objectMapper")
-    @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private HotelRestExport hotelRestExport;
     @MockBean
@@ -72,6 +72,8 @@ public class SystemControllerTests {
     private AuthenticationRestExport authenticationRestExport;
     @MockBean
     private JwtUtil jwtUtil;
+    @MockBean
+    private KafkaProducer kafkaProducer;
 
     @BeforeEach
     void setUp() {
@@ -334,7 +336,7 @@ public class SystemControllerTests {
 
         mvc.perform(patch(RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isOk());
     }
@@ -370,7 +372,7 @@ public class SystemControllerTests {
 
         mvc.perform(patch(RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isBadRequest());
     }
@@ -406,7 +408,7 @@ public class SystemControllerTests {
 
         mvc.perform(patch(RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isForbidden());
     }
@@ -442,7 +444,7 @@ public class SystemControllerTests {
 
         mvc.perform(patch(RestApiRoutes.SYSTEM_PARTIAL_UPDATE_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isForbidden());
     }
@@ -485,7 +487,7 @@ public class SystemControllerTests {
 
         mvc.perform(post(RestApiRoutes.SYSTEM_ADD_ROOM)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isCreated());
     }
@@ -528,7 +530,7 @@ public class SystemControllerTests {
 
         mvc.perform(post(RestApiRoutes.SYSTEM_ADD_ROOM)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isForbidden());
     }
@@ -571,7 +573,7 @@ public class SystemControllerTests {
 
         mvc.perform(post(RestApiRoutes.SYSTEM_ADD_ROOM)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input))
+                        .content(objectMapper.writeValueAsString(input))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isBadRequest());
     }
@@ -617,7 +619,7 @@ public class SystemControllerTests {
         mvc.perform(put(RestApiRoutes.SYSTEM_UPDATE_ROOM, roomId)
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk());
     }
 
@@ -662,7 +664,7 @@ public class SystemControllerTests {
         mvc.perform(put(RestApiRoutes.SYSTEM_UPDATE_ROOM, roomId)
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -707,7 +709,7 @@ public class SystemControllerTests {
         mvc.perform(put(RestApiRoutes.SYSTEM_UPDATE_ROOM, roomId)
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(input)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isForbidden());
     }
 
@@ -727,10 +729,9 @@ public class SystemControllerTests {
         when(authenticationRestExport.authenticate(jwtHeader))
                 .thenReturn(AuthenticateOutput.builder().build());
 
-        when(hotelRestExport.getVisitors(startDate,endDate, null, null, null,
+        when(hotelRestExport.getVisitors(startDate, endDate, null, null, null,
                 null, null, null, null, null))
                 .thenReturn(GetVisitorsOutput.builder().visitorOutputs(List.of()).build());
-
 
 
         mvc.perform(get(RestApiRoutes.SYSTEM_GET_VISITORS)
@@ -738,6 +739,239 @@ public class SystemControllerTests {
                         .param("endDate", String.valueOf(endDate))
                         .header(HttpHeaders.AUTHORIZATION, jwtHeader))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetVisitorsBadRequest() throws Exception {
+        String jwtHeader = "Bearer 123";
+        LocalDate startDate = LocalDate.now();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(UUID.randomUUID().toString())
+                        .role("ADMIN")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        when(hotelRestExport.getVisitors(startDate, null, null, null, null,
+                null, null, null, null, null))
+                .thenReturn(GetVisitorsOutput.builder().visitorOutputs(List.of()).build());
+
+
+        mvc.perform(get(RestApiRoutes.SYSTEM_GET_VISITORS)
+                        .param("startDate", String.valueOf(startDate))
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAdminDeleteCommentOk() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = UUID.randomUUID().toString();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(UUID.randomUUID().toString())
+                        .role("ADMIN")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        when(commentsRestExport.adminDeleteComment(commentId))
+                .thenReturn(AdminDeleteCommentOutput.builder().build());
+
+
+        mvc.perform(delete(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT, commentId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testAdminDeleteCommentBadRequest() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = "abc";
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(UUID.randomUUID().toString())
+                        .role("ADMIN")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        when(commentsRestExport.adminDeleteComment(commentId))
+                .thenReturn(AdminDeleteCommentOutput.builder().build());
+
+
+        mvc.perform(delete(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT, commentId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAdminDeleteCommentForbidden() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = UUID.randomUUID().toString();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(UUID.randomUUID().toString())
+                        .role("USER")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        when(commentsRestExport.adminDeleteComment(commentId))
+                .thenReturn(AdminDeleteCommentOutput.builder().build());
+
+
+        mvc.perform(delete(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT, commentId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testAdminDeleteCommentForbiddenNoToken() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = UUID.randomUUID().toString();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(UUID.randomUUID().toString())
+                        .role("ADMIN")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        when(commentsRestExport.adminDeleteComment(commentId))
+                .thenReturn(AdminDeleteCommentOutput.builder().build());
+
+
+        mvc.perform(delete(RestApiRoutes.SYSTEM_ADMIN_DELETE_COMMENT, commentId))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testAdminEditCommentOk() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = UUID.randomUUID().toString();
+        String roomId = UUID.randomUUID().toString();
+        String adminId = UUID.randomUUID().toString();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(adminId)
+                        .role("ADMIN")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        AdminEditCommentInput adminEditCommentInput = AdminEditCommentInput.builder()
+                .roomId(roomId)
+                .adminId(adminId)
+                .content("abc")
+                .commentId(commentId)
+                .build();
+        when(commentsRestExport.adminEditComment(commentId, adminEditCommentInput))
+                .thenReturn(AdminEditCommentOutput.builder().build());
+
+        BffAdminEditCommentInput input = BffAdminEditCommentInput.builder()
+                .roomId(roomId)
+                .content("abc")
+                .build();
+        mvc.perform(put(RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT, commentId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input))
+                )
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testAdminEditCommentBadRequest() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = "123";
+        String roomId = UUID.randomUUID().toString();
+        String adminId = UUID.randomUUID().toString();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(adminId)
+                        .role("ADMIN")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        AdminEditCommentInput adminEditCommentInput = AdminEditCommentInput.builder()
+                .roomId(roomId)
+                .adminId(adminId)
+                .content("abc")
+                .commentId(commentId)
+                .build();
+        when(commentsRestExport.adminEditComment(commentId, adminEditCommentInput))
+                .thenReturn(AdminEditCommentOutput.builder().build());
+
+        BffAdminEditCommentInput input = BffAdminEditCommentInput.builder()
+                .roomId(roomId)
+                .content("abc")
+                .build();
+        mvc.perform(put(RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT, commentId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAdminEditCommentForbidden() throws Exception {
+        String jwtHeader = "Bearer 123";
+        String commentId = UUID.randomUUID().toString();
+        String roomId = UUID.randomUUID().toString();
+        String adminId = UUID.randomUUID().toString();
+
+        when(jwtUtil.decodeHeader(jwtHeader))
+                .thenReturn(JwtToken.builder()
+                        .id(adminId)
+                        .role("USER")
+                        .build());
+
+
+        when(authenticationRestExport.authenticate(jwtHeader))
+                .thenReturn(AuthenticateOutput.builder().build());
+
+        AdminEditCommentInput adminEditCommentInput = AdminEditCommentInput.builder()
+                .roomId(roomId)
+                .adminId(adminId)
+                .content("abc")
+                .commentId(commentId)
+                .build();
+        when(commentsRestExport.adminEditComment(commentId, adminEditCommentInput))
+                .thenReturn(AdminEditCommentOutput.builder().build());
+
+        BffAdminEditCommentInput input = BffAdminEditCommentInput.builder()
+                .roomId(roomId)
+                .content("abc")
+                .build();
+        mvc.perform(put(RestApiRoutes.SYSTEM_ADMIN_EDIT_COMMENT, commentId)
+                        .header(HttpHeaders.AUTHORIZATION, jwtHeader)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isForbidden());
     }
 
 }
