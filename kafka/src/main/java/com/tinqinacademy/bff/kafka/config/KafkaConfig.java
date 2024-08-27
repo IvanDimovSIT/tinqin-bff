@@ -8,8 +8,16 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaConfig {
     @Bean
-    public NewTopic topic() {
+    public NewTopic wordsTopic() {
         return TopicBuilder.name("words")
+                .partitions(10)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic deleteTopic() {
+        return TopicBuilder.name("delete")
                 .partitions(10)
                 .replicas(1)
                 .build();

@@ -6,6 +6,7 @@ import com.tinqinacademy.bff.api.operations.system.admineditcomment.BffAdminEdit
 import com.tinqinacademy.bff.api.operations.system.admineditcomment.BffAdminEditCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.bff.core.util.EditCommentMessageProducer;
 import com.tinqinacademy.comments.api.operations.system.admineditcomment.AdminEditCommentInput;
 import com.tinqinacademy.comments.api.operations.system.admineditcomment.AdminEditCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
@@ -20,11 +21,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminEditCommentOperationProcessor extends BaseOperationProcessor implements BffAdminEditCommentOperation {
     private final CommentsRestExport commentsRestExport;
+    private final EditCommentMessageProducer editCommentMessageProducer;
 
     public AdminEditCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
-                                              Validator validator, CommentsRestExport commentsRestExport) {
+                                              Validator validator, CommentsRestExport commentsRestExport,
+                                              EditCommentMessageProducer editCommentMessageProducer) {
         super(conversionService, errorMapper, validator);
         this.commentsRestExport = commentsRestExport;
+        this.editCommentMessageProducer = editCommentMessageProducer;
     }
 
     @Override
@@ -40,6 +44,7 @@ public class AdminEditCommentOperationProcessor extends BaseOperationProcessor i
 
                     BffAdminEditCommentOutput output = conversionService.convert(commentsOutput,
                             BffAdminEditCommentOutput.class);
+                    editCommentMessageProducer.sendMessageForEditedComment(input.getCommentId(), input.getContent());
 
                     log.info("End process result:{}", output);
 

@@ -6,6 +6,7 @@ import com.tinqinacademy.bff.api.operations.hotel.editcomment.BffEditCommentOper
 import com.tinqinacademy.bff.api.operations.hotel.editcomment.BffEditCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.bff.core.util.EditCommentMessageProducer;
 import com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentInput;
 import com.tinqinacademy.comments.api.operations.hotel.editcomment.EditCommentOutput;
 import com.tinqinacademy.comments.restexport.CommentsRestExport;
@@ -20,12 +21,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EditCommentOperationProcessor extends BaseOperationProcessor implements BffEditCommentOperation {
     private final CommentsRestExport commentsRestExport;
+    private final EditCommentMessageProducer editCommentMessageProducer;
 
     public EditCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
-                                         Validator validator, CommentsRestExport commentsRestExport) {
+                                         Validator validator, CommentsRestExport commentsRestExport,
+                                         EditCommentMessageProducer editCommentMessageProducer) {
         super(conversionService, errorMapper, validator);
         this.commentsRestExport = commentsRestExport;
+        this.editCommentMessageProducer = editCommentMessageProducer;
     }
+
 
     @Override
     public Either<Errors, BffEditCommentOutput> process(BffEditCommentInput input) {
@@ -39,6 +44,7 @@ public class EditCommentOperationProcessor extends BaseOperationProcessor implem
                             .editComment(input.getCommentId(), commentInput);
 
                     BffEditCommentOutput output = conversionService.convert(commentsOutput, BffEditCommentOutput.class);
+                    editCommentMessageProducer.sendMessageForEditedComment(input.getCommentId(), input.getContent());
 
                     log.info("End process result:{}", output);
 

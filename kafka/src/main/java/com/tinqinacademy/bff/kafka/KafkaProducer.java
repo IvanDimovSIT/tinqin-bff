@@ -1,6 +1,7 @@
 package com.tinqinacademy.bff.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tinqinacademy.bff.kafka.model.DeleteMessage;
 import com.tinqinacademy.bff.kafka.model.WordMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,15 @@ public class KafkaProducer {
         try {
             String messageJson = objectMapper.writeValueAsString(message);
             kafkaTemplate.send("words", messageJson);
+        } catch (Exception e) {
+            log.error(String.format("Error sending message: %s", e.getMessage()));
+        }
+    }
+
+    public void sendDeleteMessage(DeleteMessage message) {
+        try {
+            String messageJson = objectMapper.writeValueAsString(message);
+            kafkaTemplate.send("delete", messageJson);
         } catch (Exception e) {
             log.error(String.format("Error sending message: %s", e.getMessage()));
         }

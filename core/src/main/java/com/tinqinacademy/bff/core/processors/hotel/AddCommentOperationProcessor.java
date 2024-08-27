@@ -6,6 +6,7 @@ import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOperat
 import com.tinqinacademy.bff.api.operations.hotel.addcomment.BffAddCommentOutput;
 import com.tinqinacademy.bff.core.errors.ErrorMapper;
 import com.tinqinacademy.bff.core.processors.BaseOperationProcessor;
+import com.tinqinacademy.bff.core.util.TextSplitter;
 import com.tinqinacademy.bff.kafka.KafkaProducer;
 import com.tinqinacademy.bff.kafka.model.WordMessage;
 import com.tinqinacademy.comments.api.operations.hotel.addcomment.AddCommentInput;
@@ -32,28 +33,24 @@ public class AddCommentOperationProcessor extends BaseOperationProcessor impleme
     private final CommentsRestExport commentsRestExport;
     private final HotelRestExport hotelRestExport;
     private final KafkaProducer kafkaProducer;
+    private final TextSplitter textSplitter;
 
     public AddCommentOperationProcessor(ConversionService conversionService, ErrorMapper errorMapper,
                                         Validator validator, CommentsRestExport commentsRestExport,
-                                        HotelRestExport hotelRestExport, KafkaProducer kafkaProducer) {
+                                        HotelRestExport hotelRestExport, KafkaProducer kafkaProducer, TextSplitter textSplitter) {
         super(conversionService, errorMapper, validator);
         this.commentsRestExport = commentsRestExport;
         this.hotelRestExport = hotelRestExport;
         this.kafkaProducer = kafkaProducer;
+        this.textSplitter = textSplitter;
     }
 
     private void validateRoomId(String roomId){
         GetRoomOutput hotelOutput = hotelRestExport.getRoom(roomId);
     }
 
-    private List<String> splitIntoWords(String text) {
-        return Arrays.stream(text.split("[\\s\\p{Punct}]+"))
-                .filter(word -> !word.isBlank())
-                .toList();
-    }
-
     private void sendMessageAddWords(String id, String content){
-        Set<String> uniqueWords = new HashSet<>(splitIntoWords(content));
+        Set<String> uniqueWords = textSplitter.splitIntoUniqueWords(content);
 
         List<WordMessage> messages = uniqueWords
                 .stream()
